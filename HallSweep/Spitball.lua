@@ -1,69 +1,77 @@
+module(..., package.seeall)
+
 local MyCharacter={}
+
+
+function MyCharacter.new()
 
 	local shouldRepeat=true;
 
-	MyCharacter=display.newImageRect("images/spitball-iPad.png",26,26)
+	spitball=display.newImageRect("images/spitball-iPad.png",26,26)
 	
 	
 	--Move the start position to the far right of the screen
 	--MyCharacter:setReferencePoint(display.CenterLeftReferencePoint)
-	MyCharacter.x=display.contentWidth + MyCharacter.contentWidth * 3
+	spitball.x=display.contentWidth + spitball.contentWidth * 3
 	
 	print("Content Width: "..display.contentWidth)
-	print("Spitball Width: "..MyCharacter.contentWidth)
-	print("Spitball Off Screen: "..tostring(-2 * MyCharacter.contentWidth))
-	MyCharacter.myName="spitball"
-	physics.addBody( MyCharacter, "static", physicsData:get("spitball-iPad") )
+	print("Spitball Width: "..spitball.contentWidth)
+	print("Spitball Off Screen: "..tostring(-2 * spitball.contentWidth))
+	spitball.myName="spitball"
+	physics.addBody( spitball, "static", physicsData:get("spitball-iPad") )
 	
-	MyCharacter.isFixedRotation = false
+	spitball.isFixedRotation = false
 	
 	local function spitRotate (event)
-		transition.to( MyCharacter, { rotation = MyCharacter.rotation - 360, time=600 } )
+		transition.to( spitball, { rotation = spitball.rotation - 360, time=600 } )
 	end
 	
-	MyCharacter.rotateTimer=timer.performWithDelay(600, spitRotate, 0 )
+	spitball.rotateTimer=timer.performWithDelay(600, spitRotate, 0 )
 	
 	
 	function onGameOver( self, event )
 		shouldRepeat=false
-		Runtime:removeEventListener( "SignalGameOver", MyCharacter )
+		Runtime:removeEventListener( "SignalGameOver", spitball )
 	end
-	MyCharacter.SignalGameOver = onGameOver
+	spitball.SignalGameOver = onGameOver
 	
 	local function removeObject(object)
-		timer.cancel(MyCharacter.rotateTimer)
-		MyCharacter:removeEventListener( "SignalGameOver", MyCharacter )
-		MyCharacter:removeSelf()
-		MyCharacter=nil;
+		timer.cancel(spitball.rotateTimer)
+		spitball:removeEventListener( "SignalGameOver", spitball )
+		spitball:removeSelf()
+		spitball=nil;
 	end
 	
 	--Set your character's speed
-	MyCharacter.speed=1.5  -- Try changing this number to adjust the speed
+	spitball.speed=1.5  -- Try changing this number to adjust the speed
 	
 	--Calculate the time it takes to travel
 	local distanceToTravel=display.contentWidth
-	local travelTime=distanceToTravel/(1/MyCharacter.speed)
+	local travelTime=distanceToTravel/(1/spitball.speed)
 	
 	
 	local function repeatCharacter()
 		if(shouldRepeat) then
-			MyCharacter.x=display.contentWidth + MyCharacter.contentWidth
-			MyCharacter.y=math.random(MyCharacter.contentHeight,display.contentHeight * .5)
-			MyCharacter.transition=transition.to(MyCharacter,{time=travelTime,
-									x=-3 * MyCharacter.contentWidth,
-									onComplete=MyCharacter.shouldMoveCharacter})
+			spitball.x=display.contentWidth + spitball.contentWidth
+			spitball.y=math.random(spitball.contentHeight,display.contentHeight * .5)
+			spitball.transition=transition.to(spitball,{time=travelTime,
+									x=-3 * spitball.contentWidth,
+									onComplete=spitball.shouldMoveCharacter})
 		end
 	end
 	
-	MyCharacter.shouldMoveCharacter = function()
+	spitball.shouldMoveCharacter = function()
 		local randomStartTime=math.random(1000,5000)
 		timer.performWithDelay(randomStartTime,repeatCharacter,1)
 	end
 	
-	MyCharacter.shouldMoveCharacter()
+	spitball.shouldMoveCharacter()
 	
 	
-	Runtime:addEventListener( "SignalGameOver", MyCharacter )
+	Runtime:addEventListener( "SignalGameOver", spitball )
+
+	return spitball
+end
 
 
 return MyCharacter;

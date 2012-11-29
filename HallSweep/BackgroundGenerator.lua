@@ -1,24 +1,22 @@
+module(..., package.seeall)
 
 local BackgroundGenerator={}
 
-local shouldRepeat=true;
 
-local moveBG;
-
-BackgroundGenerator.backgroundGroup=display.newGroup()
-
-BackgroundGenerator.foregroundGroup=display.newGroup()
 
 function BackgroundGenerator:generateBackground()
+	
+	local backgroundGroup=display.newGroup()
 
+	local foregroundGroup=display.newGroup()
+
+	
 	local randomBackground=1
 
 	if(randomBackground==1) then
 		--Generate main hallway background
 		local scene1=display.newGroup()
-		
 		local myBackground=display.newImageRect("images/game-1-iPad.png",1024,768)
-
 		scene1:insert(myBackground)
 		myBackground:setReferencePoint(display.TopLeftReferencePoint)
 		myBackground.x=0
@@ -27,7 +25,7 @@ function BackgroundGenerator:generateBackground()
 		--scene1:setReferencePoint(display.TopLeftReferencePoint)
 		scene1.x=0
 		scene1.y=0
-		BackgroundGenerator.backgroundGroup:insert(scene1)
+		backgroundGroup:insert(scene1)
 		print("Scene1 X: "..tostring(scene1.contentBounds.xMin))
 		
 		local sceneSpeed=2;
@@ -50,7 +48,7 @@ function BackgroundGenerator:generateBackground()
 		--scene2:setReferencePoint(display.TopLeftReferencePoint)
 		scene2.x=1 * display.contentWidth
 		scene2.y=0
-		BackgroundGenerator.backgroundGroup:insert(scene2)		
+		backgroundGroup:insert(scene2)		
 		
 		local scene3=display.newGroup()
 		local myBackground3=display.newImageRect("images/game-1-iPad.png",1024,768)
@@ -62,7 +60,7 @@ function BackgroundGenerator:generateBackground()
 		--scene3:setReferencePoint(display.TopLeftReferencePoint)
 		scene3.x=2 * display.contentWidth
 		scene3.y=0
-		BackgroundGenerator.backgroundGroup:insert(scene3)		
+		backgroundGroup:insert(scene3)		
 		
 		print("Scene2 xMin: "..tostring(scene2.contentBounds.xMin))
 		
@@ -118,10 +116,11 @@ function BackgroundGenerator:generateBackground()
 				
 				
 		local bgSpeed = -2.5;
-				
+		
+		local shouldRepeat=true;
+		
 		local tPrevious = system.getTimer()
 		moveBG = function(event)
-			shouldRepeat=true
 			if(shouldRepeat) then
 				local tDelta = event.time - tPrevious
 				tPrevious = event.time	
@@ -135,7 +134,7 @@ function BackgroundGenerator:generateBackground()
 				 if(scene2.contentBounds.xMin< 0)  and (scene3.contentBounds.xMin < display.contentWidth)  and (scene1.contentBounds.xMax < 0) then
 				 	print("Resetting scene1")
 				 	
-				 	
+				 	--[[
 				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
 				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
 				 	
@@ -146,7 +145,7 @@ function BackgroundGenerator:generateBackground()
 				 	
 				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
 				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-				 	
+				 	]]
 				 	
 				 	
 				 	
@@ -165,7 +164,7 @@ function BackgroundGenerator:generateBackground()
 				 if(scene3.contentBounds.xMin < 0)  and (scene1.contentBounds.xMin < display.contentWidth)  and (scene2.contentBounds.xMax < 0) then
 				 	print("Resetting scene2")
 				 	
-				 	
+				 	--[[
 				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
 				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
 				 	
@@ -174,7 +173,7 @@ function BackgroundGenerator:generateBackground()
 				 	
 				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
 				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-
+					]]
 				 	
 				 	
 				 	scene2randomObjects:removeSelf()
@@ -192,7 +191,7 @@ function BackgroundGenerator:generateBackground()
 				 if(scene1.contentBounds.xMin < 0) and (scene2.contentBounds.xMin < display.contentWidth)  and (scene3.contentBounds.xMax < 0) then
 				 	print("Resetting scene3")
 				 	
-				 	
+				 	--[[
 				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
 				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
 				 	
@@ -201,7 +200,7 @@ function BackgroundGenerator:generateBackground()
 				 	
 				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
 				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-
+					]]
 				 	
 				 	
 				 	scene3randomObjects:removeSelf()
@@ -229,13 +228,12 @@ function BackgroundGenerator:generateBackground()
 		print("here")
 		shouldRepeat=false
 		Runtime:removeEventListener("enterFrame",moveBG)
-		Runtime:removeEventListener( "SignalGameOver", BackgroundGenerator )
+		Runtime:removeEventListener( "SignalGameOver", onGameOver )
 	end
 	 
-	BackgroundGenerator.SignalGameOver = onGameOver
-	Runtime:addEventListener( "SignalGameOver", BackgroundGenerator )
+	Runtime:addEventListener( "SignalGameOver", onGameOver )
 
-
+	return backgroundGroup, foregroundGroup
 end
 
 

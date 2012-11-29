@@ -23,10 +23,6 @@ local scene = storyboard.newScene()
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-
-
-
-		
 		
 		--Show physics drawing lines, for help with debugging
 		--physics.setDrawMode( "hybrid" )
@@ -54,7 +50,9 @@ function scene:createScene( event )
 		
 		
 		
-		local Patriot=require("Patriot")
+		local PatriotMachine=require("Patriot")
+		local Patriot=PatriotMachine.new()
+
 		group:insert(Patriot)
 		
 		--We are creating an anchor point so the mouse can only move up and down
@@ -71,45 +69,56 @@ function scene:createScene( event )
 		
 		
 		
-		local onGameOver=function( self, event )
+		local onGameOver=function()
+		--[[
+			print("First onGameOver: Num Objects in Group: "..tostring(group.numChildren))
 			Runtime:removeEventListener( "SignalGameOver", onGameOver )
-		
+			print("Creating gameOverText")
 		    local gameOverText=display.newText("Game Over",0,0,native.systemFontBold,128)
+		    print("gameOverText: "..gameOverText.text)
+		    print("onGameOver: Num Objects in Group: "..tostring(group.numChildren))
 		    group:insert(gameOverText)
+		    
 		    gameOverText.x=display.contentCenterX
 		    gameOverText.y=display.contentCenterY
+		    ]]
 		    
-		    storyboard.gotoScene("GameOverScene","fade",3000)
+		    local changeScene=function()
+		    	storyboard.gotoScene("GameOverScene","fade",1000)
+		    end
+		    
+		    timer.performWithDelay(2000,changeScene)
 
 		end
 
 		local BackgroundGenerator=require("BackgroundGenerator")
-		group:insert(BackgroundGenerator.backgroundGroup)
+		local backgroundGroup, foregroundGroup=BackgroundGenerator:generateBackground()
 		
-		BackgroundGenerator:generateBackground()
+		group:insert(backgroundGroup)
+		group:insert(foregroundGroup)
 		
 		--group:insert(BackgroundGenerator.foregroundGroup)
 		
 		
 		local Bully=require("Bully")
-		group:insert(Bully)
+		group:insert(Bully.new())
 		
 		local OfficerRay=require("OfficerRay")
-		group:insert(OfficerRay)
+		group:insert(OfficerRay.new())
 		
 		local Spitball=require("Spitball")
-		group:insert(Spitball)
+		group:insert(Spitball.new())
 		
-		BackgroundGenerator.backgroundGroup:toBack()
-		BackgroundGenerator.foregroundGroup:toFront()
+		backgroundGroup:toBack()
+		foregroundGroup:toFront()
 		
 		
 		group:insert(letterboxBorder({r=0,g=0,b=0}))
 		
+		print("Create Scene: Num Objects in Group: "..tostring(group.numChildren))
 	
 		Runtime:addEventListener( "SignalGameOver", onGameOver )
 		
-
 end
 
 
@@ -148,25 +157,21 @@ end
 -- Called when scene is about to move offscreen:
 function scene:exitScene( event )
         local group = self.view
-
-        -----------------------------------------------------------------------------
-
-        --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
-
-        -----------------------------------------------------------------------------
-
+        
+		physics.stop()
 end
 
 
 -- Called AFTER scene has finished moving offscreen:
 function scene:didExitScene( event )
         local group = self.view
+        
+        storyboard.removeScene( "GameScene" )
         -----------------------------------------------------------------------------
 
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-	storyboard.removeScene( "GameScene" )
 end
 
 
