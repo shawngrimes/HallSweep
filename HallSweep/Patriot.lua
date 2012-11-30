@@ -82,10 +82,10 @@ function MyCharacter.new()
 	local function crashPatriot()
 		newPatriot:removeEventListener("collision", newPatriot)
 		newPatriot:play({startFrame=7,endFrame=9,loop=1})
-		Runtime:dispatchEvent({name="SignalGameOver"})
 		Runtime:removeEventListener("enterFrame",movePatriot)
 		Runtime:removeEventListener("touch", onTouch)
-	end
+		Runtime:dispatchEvent({name="SignalGameOver"})
+			end
 	
 	
 	local function onCollision( self, event )

@@ -28,6 +28,6 @@ storyboard.gotoScene( "MainMenuScene", "fade", 200 )
 --storyboard.gotoScene( "HighScores", "fade", 200 )
 
 
-require("utils.letterBoxBoarder")
+require("utils.LetterBoxBoarder")
 
 --local newBox=display.newRect(0,0,50,display.contentHeight)
