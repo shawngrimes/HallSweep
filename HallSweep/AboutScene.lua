@@ -31,56 +31,32 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-	local mybackground = display.newImageRect("images/title@2x.png",960,640)
-	mybackground.x=display.contentCenterX
+	local mybackground = display.newImage("images/brick_wall.png")
+	mybackground:setReferencePoint(display.CenterReferencePoint)
+	mybackground.x=display.contentCenterX 
 	mybackground.y=display.contentCenterY
+	mybackground:scale(3,4)
 	group:insert(mybackground)
-		
-local widget = require "widget"
-
-local myButtonEvent = function (event )
-	if event.phase == "release" then
-		print( "You pressed and released the "..event.target.id.." button!" )
-		if(event.target.id == "about button") then
-			storyboard.gotoScene("AboutScene","fade",1000)
-		else
-			storyboard.gotoScene("GameScene","fade",1000)
-		end
-	end
-end 
-
-local myButton=widget.newButton{ 
-	id = "play button",
-	right = 100, 
-	top = 200, 
-	--width = 120, height = 50, 
-	default="images/btn-play-up@2x.png",
-	over="images/btn-play-down@2x.png",
-	onEvent = myButtonEvent
-	}
 	
-myButton.x= display.contentCenterX
-myButton:setReferencePoint (display.BottomRightReferencePoint)
-myButton.x= display.contentWidth - myButton.contentWidth/4 
-myButton.y= display.contentHeight - myButton.contentHeight/2
-group:insert(myButton)
-
-local myButton2=widget.newButton{
-	id = "about button",
-	left = 100, 
-	top = 200, 
-	--width = 120, height = 50, 
-	default="images/btn-about-up@2x.png",
-	over="images/btn-about-down@2x.png",
-	onEvent = myButtonEvent
-	}
 	
-myButton2.x= display.contentCenterX
-myButton2:setReferencePoint (display.BottomLeftReferencePoint)
-myButton2.x= 0 + myButton2.contentWidth/4
-myButton2.y= display.contentHeight - myButton2.contentHeight/2 	
-group:insert(myButton2)	
-		
+	local myImage = display.newImage("images/btn-website-up-iPad.png")
+	myImage:scale(.75,.75)
+	myImage.x=display.contentCenterX 
+	myImage.y=display.contentCenterY
+	group:insert(myImage)
+	
+	local myTextObject = display.newText("Designed by:", 50, 700, native.systemFont, 45)
+	
+	local myBack = display.newImage("images/btn-facebook-up-iPad.png")
+	myBack.y=display.contentCenterY
+	myBack:scale(.5,.5)
+	group:insert(myBack)
+	
+	local myWeb = display.newImage("images/btn-twitter-up-iPad.png")
+	myWeb.y=display.contentCenterY	
+	myWeb.x=display.contentWidth - myWeb.contentWidth/4
+	myWeb:scale(.5,.5)	
+	group:insert(myWeb)	
 end
 
 
@@ -95,10 +71,6 @@ function scene:willEnterScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-		if(gameBackgroundMusicChannel~=nil) then
-			audio.stop(gameBackgroundMusicChannel)
-		end
-		backgroundMusicChannel=audio.play(titleBackgroundMusicObject, {loops=-1})
 end
 
 
