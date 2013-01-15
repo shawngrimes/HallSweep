@@ -65,12 +65,13 @@ function scene:createScene( event )
 		physics.addBody( pistonGroundPoint, "static", { friction=0.5, bounce=0.3 })
 		
 		--Now we connect the mouse to the piston point
-		myPistonJoint = physics.newJoint( "piston", Patriot, pistonGroundPoint, Patriot.x,Patriot.y, 0,-display.contentHeight )
+		myPistonJoint = physics.newJoint( "piston", Patriot.patriotBody, pistonGroundPoint, Patriot.x,Patriot.y, 0,-display.contentHeight )
 		
 		
 		
 		local onGameOver=function()
-		--[[
+			print("Hall Passes Collected: ",Patriot.getHallPasses())
+			--[[
 			print("First onGameOver: Num Objects in Group: "..tostring(group.numChildren))
 			Runtime:removeEventListener( "SignalGameOver", onGameOver )
 			print("Creating gameOverText")
@@ -144,7 +145,6 @@ end
 function scene:enterScene( event )
         local group = self.view
 		
-
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)

@@ -43,7 +43,7 @@ local myButtonEvent = function (event )
 		print( "You pressed and released the "..event.target.id.." button!" )
 		if(event.target.id == "about button") then
 			storyboard.gotoScene("AboutScene","fade",1000)
-		else
+		elseif(event.target.id=="play button") then
 			storyboard.gotoScene("GameScene","fade",1000)
 		end
 	end

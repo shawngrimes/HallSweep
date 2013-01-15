@@ -12,7 +12,8 @@ function MyCharacter.new()
 	local movieMachine=require "movieclip";
 	
 	--Create a new animation, load all the frames
-	local newPatriot=movieMachine.newAnim( { "images/patriot-1-iPad.png",
+	local newPatriot=display.newGroup()
+	local movingPatriot=movieMachine.newAnim( { "images/patriot-1-iPad.png",
 										"images/patriot-2-iPad.png",
 										"images/patriot-3-iPad.png",
 										"images/patriot-4-iPad.png",
@@ -21,19 +22,21 @@ function MyCharacter.new()
 										"images/patriot-7-iPad.png",
 										"images/patriot-8-iPad.png",
 										"images/patriot-9-iPad.png"} )
-	
-	newPatriot:setSpeed(0.2) --This is the animation speed
+										
+	newPatriot:insert(movingPatriot)
+	newPatriot.patriotBody=movingPatriot
+	movingPatriot:setSpeed(0.2) --This is the animation speed
 	
 	--Play specific frames
-	newPatriot:play({startFrame=1,endFrame=4})
+	movingPatriot:play({startFrame=1,endFrame=4})
 	
 	
 	--Set the character in the bottom left
-	newPatriot.x=newPatriot.contentWidth * .5
-	newPatriot.y=display.contentHeight - newPatriot.contentHeight * .5
+	movingPatriot.x=movingPatriot.contentWidth * .75
+	movingPatriot.y=display.contentHeight - movingPatriot.contentHeight * .5
 	
-	newPatriot.myName="patriotHero"
-	physics.addBody( newPatriot, physicsData:get("patriot-2-iPad") )
+	movingPatriot.myName="patriotHero"
+	physics.addBody( movingPatriot, physicsData:get("patriot-2-iPad") )
 	
 	
 	--This value tells us if the mouse is flying or not
@@ -44,20 +47,21 @@ function MyCharacter.new()
 	--This function will be used to control if the mouse should move
 	newPatriot.isFlying=false
 	local function movePatriot()
-		vx, vy = newPatriot:getLinearVelocity()
+		vx, vy = movingPatriot:getLinearVelocity()		
 		--print("Pat Y: "..tostring(Patriot.y))
 		if(newPatriot.vy<0) then
 			--This applies a force to the rocket mouse (pushing him upward)
 			newPatriot.isFlying=true
-			newPatriot:stopAtFrame(5)
-			newPatriot:applyForce(0, newPatriot.vy, newPatriot, newPatriot.y)
+			movingPatriot:stopAtFrame(5)
+			movingPatriot:applyForce(0, newPatriot.vy, movingPatriot, movingPatriot.y)
 		elseif(vy>0 and newPatriot.isFlying==true) then
-			newPatriot:stopAtFrame(6)
+			movingPatriot:stopAtFrame(6)
 		end
 		
-		if(newPatriot.y>625 and newPatriot.isFlying==true) then
+		if(movingPatriot.y>625 and newPatriot.isFlying==true) then
+			print("Not flying anymore")
 			newPatriot.isFlying=false
-			newPatriot:play({startFrame=1,endFrame=4})
+			movingPatriot:play({startFrame=1,endFrame=4})
 		end
 	end
 	
@@ -80,12 +84,12 @@ function MyCharacter.new()
 	
 	
 	local function crashPatriot()
-		newPatriot:removeEventListener("collision", newPatriot)
-		newPatriot:play({startFrame=7,endFrame=9,loop=1})
+		movingPatriot:removeEventListener("collision", movingPatriot)
+		movingPatriot:play({startFrame=7,endFrame=9,loop=1})
 		Runtime:removeEventListener("enterFrame",movePatriot)
 		Runtime:removeEventListener("touch", onTouch)
 		Runtime:dispatchEvent({name="SignalGameOver"})
-			end
+	end
 	
 	
 	local function onCollision( self, event )
