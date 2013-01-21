@@ -70,7 +70,6 @@ function scene:createScene( event )
 		
 		
 		local onGameOver=function()
-			print("Hall Passes Collected: ",Patriot.getHallPasses())
 			--[[
 			print("First onGameOver: Num Objects in Group: "..tostring(group.numChildren))
 			Runtime:removeEventListener( "SignalGameOver", onGameOver )
@@ -144,7 +143,26 @@ end
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
         local group = self.view
+		announcementMusicObject = audio.loadStream("HallSweepAnnouncement.mp3")
+		audio.play(announcementMusicObject)
 		
+		local getToClassLabel=display.newText("You Better Hurry To Class!", 0,0, native.systemFontBold,48)
+		group:insert(getToClassLabel)
+		getToClassLabel.x=display.contentWidth/2
+		getToClassLabel:setTextColor(0,0,255)
+		
+		local coinlabel=display.newText("0 coins",0,0, native.systemFontBold,72)
+		group:insert(coinlabel)
+		coinlabel.x=display.contentWidth - coinlabel.contentWidth
+		coinlabel.y=display.contentHeight - coinlabel.contentHeight
+
+	    local function removeGetToClassLabel(event)
+	        getToClassLabel:removeSelf()
+	    end
+	
+	    timer.performWithDelay(2000, removeGetToClassLabel);
+ 
+
         -----------------------------------------------------------------------------
 
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)

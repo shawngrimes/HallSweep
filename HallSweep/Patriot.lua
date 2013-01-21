@@ -93,6 +93,7 @@ function MyCharacter.new()
 	
 	
 	local function onCollision( self, event )
+		print("Collision: ", event.other.myName)
 	        if ( event.phase == "began" ) then
 	        	if(event.other.myName == "bully" or event.other.myName=="OfficerRay") then
 	        		crashPatriot()
@@ -104,8 +105,9 @@ function MyCharacter.new()
 	        end
 	end
 	 
-	newPatriot.collision = onCollision
-	newPatriot:addEventListener( "collision", newPatriot )
+	movingPatriot.collision = onCollision
+	movingPatriot:addEventListener( "collision", movingPatriot )
+	
 	
 	return newPatriot;
 end
