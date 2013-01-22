@@ -5,69 +5,76 @@ local MyCharacter={}
 
 function MyCharacter.new()
 
-	local shouldRepeat=true;
-
 	--create hall pass object
-	spitball=display.newImageRect("images/object-pass-iPad.png",102,64)
+	hallpass=display.newImageRect("images/object-pass-iPad.png",102,64)
 	
 	
 	--Move the start position to the far right of the screen
-	spitball.x=display.contentWidth + spitball.contentWidth * 3
+	hallpass.x=display.contentWidth + hallpass.contentWidth
+	hallpass.y=display.contentHeight * .5
 	
-	spitball.myName="spitball"
-	physics.addBody( spitball, "static", physicsData:get("spitball-iPad") )
-	
-	spitball.isFixedRotation = false
-	
-	local function spitRotate (event)
-		transition.to( spitball, { rotation = spitball.rotation - 360, time=600 } )
-	end
-	
-	spitball.rotateTimer=timer.performWithDelay(600, spitRotate, 0 )
-	
-	
-	function onGameOver( self, event )
-		shouldRepeat=false
-		Runtime:removeEventListener( "SignalGameOver", spitball )
-	end
-	spitball.SignalGameOver = onGameOver
+	hallpass.myName="hallpass"
+	physics.addBody( hallpass, "static", { density = 1.0, friction = 0.3, bounce = 0.2 } )
+	hallpass.isSensor=true
+    
+    local function onCollision( self, event )
+        print("hallpass Collision With: ", event.other.myName)
+        if ( event.phase == "began" and event.other.myName=="patriotHero") then
+            hallpass.isVisible=false
+        end
+    end
+    hallpass.collision = onCollision
+    hallpass:addEventListener( "collision", hallpass )
+    
+	local path = {}
+--Define your path:
+--First Stop on Path
+--path[1]={}
+--path[1].x=display.contentWidth
+--path[1].y=display.contentHeight * .5
+
+--Second Stop on Path
+path[1]={}
+path[1].x=display.contentWidth * .5
+path[1].y=0
+
+--Third Stop on Path
+path[2]={}
+path[2].x=-hallpass.contentWidth
+path[2].y=display.contentHeight * .5
+ 
+local animate
+local posCount = 1
+--moving the object variable named "ball" -- this is where animation takes place
+local function moveObject(event)
+	print("PosCount: ",posCount)
+	print("Path #: ",#path)
+     if posCount <= #path then
+     	transition.to(hallpass,{ time=1500,x=path[posCount].x,y=path[posCount].y})
+--        hallpass.x = path[posCount].x
+--        hallpass.y = path[posCount].y
+        posCount = posCount + 1
+     else
+         timer.cancel(animate)
+     end
+end
+ 
+-- to move ball when we click the animate text
+local function move()
+	posCount = 1
+	animate = timer.performWithDelay( 3000, moveObject, #path )
+end
 	
 	local function removeObject(object)
-		timer.cancel(spitball.rotateTimer)
-		spitball:removeEventListener( "SignalGameOver", spitball )
-		spitball:removeSelf()
-		spitball=nil;
+		hallpass:removeSelf()
+		hallpass=nil;
 	end
 	
-	--Set your character's speed
-	spitball.speed=1.5  -- Try changing this number to adjust the speed
 	
-	--Calculate the time it takes to travel
-	local distanceToTravel=display.contentWidth
-	local travelTime=distanceToTravel/(1/spitball.speed)
-	
-	
-	local function repeatCharacter()
-		if(shouldRepeat) then
-			spitball.x=display.contentWidth + spitball.contentWidth
-			spitball.y=math.random(spitball.contentHeight,display.contentHeight * .5)
-			spitball.transition=transition.to(spitball,{time=travelTime,
-									x=-3 * spitball.contentWidth,
-									onComplete=spitball.shouldMoveCharacter})
-		end
-	end
-	
-	spitball.shouldMoveCharacter = function()
-		local randomStartTime=math.random(1000,5000)
-		timer.performWithDelay(randomStartTime,repeatCharacter,1)
-	end
-	
-	spitball.shouldMoveCharacter()
-	
-	
-	Runtime:addEventListener( "SignalGameOver", spitball )
+	move()
 
-	return spitball
+
+	return hallpass
 end
 
 

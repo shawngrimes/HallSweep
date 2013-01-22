@@ -6,7 +6,8 @@ local MyCharacter={}
 --local MyCharacter=display.newImage("patriot-1-iPad@2x.png")
 
 function MyCharacter.new()
-	
+    local hallPassesCount=0
+	local coinCount=0
 	
 	--Load animation module
 	local movieMachine=require "movieclip";
@@ -22,7 +23,13 @@ function MyCharacter.new()
 										"images/patriot-7-iPad.png",
 										"images/patriot-8-iPad.png",
 										"images/patriot-9-iPad.png"} )
-										
+	local extinguisherFog=movieMachine.newAnim({"images/fog-1-iPad.png","images/fog-2-iPad.png"})
+    newPatriot:insert(extinguisherFog)
+    extinguisherFog:setSpeed(0.2)
+    extinguisherFog:play({startFrame=1,endFrame=2})
+    
+    extinguisherFog.isVisible=false
+	
 	newPatriot:insert(movingPatriot)
 	newPatriot.patriotBody=movingPatriot
 	movingPatriot:setSpeed(0.2) --This is the animation speed
@@ -42,16 +49,20 @@ function MyCharacter.new()
 	--This value tells us if the mouse is flying or not
 	newPatriot.vy=0
 	
-	
-	
 	--This function will be used to control if the mouse should move
 	newPatriot.isFlying=false
+	extinguisherFog.isVisible=false
 	local function movePatriot()
+	--align fog with patriot body
+    extinguisherFog.x=movingPatriot.x - extinguisherFog.contentWidth * 1.75
+    extinguisherFog.y=movingPatriot.y+(extinguisherFog.contentHeight * .75)
 		vx, vy = movingPatriot:getLinearVelocity()		
+		
 		--print("Pat Y: "..tostring(Patriot.y))
 		if(newPatriot.vy<0) then
 			--This applies a force to the rocket mouse (pushing him upward)
 			newPatriot.isFlying=true
+			extinguisherFog.isVisible=true
 			movingPatriot:stopAtFrame(5)
 			movingPatriot:applyForce(0, newPatriot.vy, movingPatriot, movingPatriot.y)
 		elseif(vy>0 and newPatriot.isFlying==true) then
@@ -61,6 +72,7 @@ function MyCharacter.new()
 		if(movingPatriot.y>625 and newPatriot.isFlying==true) then
 			print("Not flying anymore")
 			newPatriot.isFlying=false
+			extinguisherFog.isVisible=false
 			movingPatriot:play({startFrame=1,endFrame=4})
 		end
 	end
@@ -82,34 +94,74 @@ function MyCharacter.new()
 	Runtime:addEventListener("enterFrame",movePatriot)
 	
 	
-	
 	local function crashPatriot()
 		movingPatriot:removeEventListener("collision", movingPatriot)
 		movingPatriot:play({startFrame=7,endFrame=9,loop=1})
 		Runtime:removeEventListener("enterFrame",movePatriot)
 		Runtime:removeEventListener("touch", onTouch)
 		Runtime:dispatchEvent({name="SignalGameOver"})
+	
+	    extinguisherFog.isVisible=false
 	end
 	
-	
+	local lastCollisionWith=""
+    
+    local function resetLastCollision()
+        print("Resetting last Collision")
+        lastCollisionWith=""
+    end
+    
+    
 	local function onCollision( self, event )
-		print("Collision: ", event.other.myName)
-	        if ( event.phase == "began" ) then
-	        	if(event.other.myName == "bully" or event.other.myName=="OfficerRay") then
-	        		crashPatriot()
-	        	elseif(event.other.myName == "spitball") then
-	        		crashPatriot()
-	        	else
-	                print( self.myName .. ": collision began with " .. event.other.myName )
-	            end
-	        end
+        if ( event.phase == "began") then
+            print("Collision With: ", event.other.myName)
+    	    print("Last Collision With: ",tostring(lastCollisionWith))
+        	if((event.other.myName == "bully" or event.other.myName=="OfficerRay")  and (lastCollisionWith ~= event.other.myName)) then
+                lastCollisionWith=event.other.myName
+                timer.performWithDelay(500,resetLastCollision)
+				print("Hall Pass?", newPatriot.getHallPasses())
+        		if (newPatriot.getHallPasses()>=1) then 
+                    print("Deducting Hall Pass")
+					hallPassesCount=hallPassesCount-1
+				else 
+					crashPatriot()
+				end
+    	    elseif(event.other.myName == "spitball"  and (lastCollisionWith ~= event.other.myName)) then
+                lastCollisionWith=event.other.myName
+                timer.performWithDelay(500,resetLastCollision)
+                if (newPatriot.getHallPasses()>=1) then 
+                    print("Deducting Hall Pass")
+    				hallPassesCount=hallPassesCount-1
+				else 
+        		    crashPatriot()
+                end
+        elseif(event.other.myName == "hallpass" and (lastCollisionWith ~= event.other.myName)) then
+            lastCollisionWith=event.other.myName
+            timer.performWithDelay(500,resetLastCollision)
+            hallPassesCount=hallPassesCount+1
+            elseif(event.other.myName == "coin") then
+                if(event.other.isCollected==false) then
+                    coinCount=coinCount+1
+                    event.other.isCollected=true
+                end
+        	else
+                --print( self.myName .. ": collision began with " .. event.other.myName )
+            end
+        end
 	end
-	 
+	
 	movingPatriot.collision = onCollision
 	movingPatriot:addEventListener( "collision", movingPatriot )
 	
-	
+	newPatriot.getHallPasses = function()
+        return hallPassesCount
+    end
+    
+    newPatriot.getCoinCount=function()
+        return coinCount;
+    end
+    
 	return newPatriot;
-end
 
+end
 return MyCharacter;

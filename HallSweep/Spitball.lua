@@ -7,7 +7,7 @@ function MyCharacter.new()
 
 	local shouldRepeat=true;
 
-	spitball=display.newImageRect("images/spitball-iPad.png",26,26)
+	spitball=display.newImageRect("images/spitball-iPad@2x.png",52,52)
 	
 	
 	--Move the start position to the far right of the screen

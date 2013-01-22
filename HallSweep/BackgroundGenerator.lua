@@ -11,9 +11,9 @@ function BackgroundGenerator:generateBackground()
 	local foregroundGroup=display.newGroup()
 
 	
-	local randomBackground=1
+	local backgroundType=1
 
-	if(randomBackground==1) then
+	if(backgroundType==1) then
 		--Generate main hallway background
 		local scene1=display.newGroup()
 		local myBackground=display.newImageRect("images/game-1-iPad.png",1024,768)
@@ -65,42 +65,88 @@ function BackgroundGenerator:generateBackground()
 		print("Scene2 xMin: "..tostring(scene2.contentBounds.xMin))
 		
 		local function generateBackgroundScenery()
+            print("Generating Background Scenere for Type: ",backgroundType)
 			local newBackgroundGroup=display.newGroup()
-			local isThreeLocker=false
-			--print("Min: "..tostring(newBackgroundGroup.contentBounds.xMin))
-			local lastX=0;
-			--Need to make sure we only get one 3 door locker
-			local randomObjectCount=math.random(1,3)
-			randomObjectCount=2
-			for i=1,randomObjectCount do
-				local randomObject=math.random(1,3)
-				if(randomObject==3) then
-					if(isThreeLocker) then
-						randomObject=math.random(1,2)
-					else
-						isThreeLocker=true
-					end
-				end
-				local newBackgroundObject
-				if(randomObject==1) then
-					newBackgroundObject=display.newImageRect("images/locker-2-iPad.png",202,528)
-					--newBackgroundObject:setFillColor(0,0,0)
-					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
-					newBackgroundObject.y=display.contentHeight
-				elseif(randomObject==2) then
-					newBackgroundObject=display.newImageRect("images/locker-3-iPad.png",303,529)
-					--newBackgroundObject:setFillColor(0,0,0)
-					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
-					newBackgroundObject.y=display.contentHeight
-				elseif(randomObject==3) then
-					newBackgroundObject=display.newImageRect("images/door-iPad.png",197,530)
-					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
-					newBackgroundObject.y=display.contentHeight
-				end
-				newBackgroundGroup:insert(newBackgroundObject)
-				newBackgroundObject.x=lastX + newBackgroundObject.contentWidth
-				lastX=lastX+newBackgroundObject.contentWidth * 1.5
-			end
+            if(backgroundType==1) then
+    			local isThreeLocker=false
+    			--print("Min: "..tostring(newBackgroundGroup.contentBounds.xMin))
+    			local lastX=0;
+    			--Need to make sure we only get one 3 door locker
+    			local randomObjectCount=math.random(1,3)
+    			randomObjectCount=3
+    			for i=1,randomObjectCount do
+    				local randomObject=math.random(1,3)
+    				if(randomObject==3) then
+    					if(isThreeLocker) then
+    						randomObject=math.random(1,2)
+    					else
+    						isThreeLocker=true
+    					end
+    				end
+    				local newBackgroundObject
+    				if(randomObject==1) then
+    					newBackgroundObject=display.newImageRect("images/locker-2-iPad.png",202,528)
+    					--newBackgroundObject:setFillColor(0,0,0)
+    					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
+    					newBackgroundObject.y=display.contentHeight
+    				elseif(randomObject==2) then
+    					newBackgroundObject=display.newImageRect("images/locker-3-iPad.png",303,529)
+    					--newBackgroundObject:setFillColor(0,0,0)
+    					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
+    					newBackgroundObject.y=display.contentHeight
+    				elseif(randomObject==3) then
+    					newBackgroundObject=display.newImageRect("images/door-iPad.png",197,530)
+    					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
+    					newBackgroundObject.y=display.contentHeight
+    				end
+    				
+                    if(lastX+newBackgroundObject.contentWidth >= display.contentWidth) then
+                        newBackgroundObject:removeSelf()
+                    else
+                        print("Last X: ",lastX + newBackgroundObject.contentWidth)
+                        newBackgroundGroup:insert(newBackgroundObject)
+        				newBackgroundObject.x=lastX --+ newBackgroundObject.contentWidth
+        				lastX=lastX+newBackgroundObject.contentWidth * 1.1
+                    end
+    			end
+            elseif(backgroundType==2) then
+                local lastX=110;
+        		--Need to make sure we only get one 3 door locker
+                local isDoubleDoor=false
+    			local randomObjectCount=math.random(2,4)
+                for i=1,randomObjectCount do
+        			local randomObject=math.random(1,100)
+    				if(randomObject>75) then
+    					if(isDoubleDoor) then
+    						randomObject=2
+    					else
+    						isDoubleDoor=true
+    					end
+    				end
+    				local newBackgroundObject
+    				if(randomObject>75) then
+                        print("Adding double door")
+    					newBackgroundObject=display.newImageRect("images/door-double-iPad.png",392,377)
+    					--newBackgroundObject:setFillColor(0,0,0)
+    					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
+    					newBackgroundObject.y=607
+    				else
+                        print("Adding window")
+    					newBackgroundObject=display.newImageRect("images/window-iPad.png",218,291)
+    					--newBackgroundObject:setFillColor(0,0,0)
+    					newBackgroundObject:setReferencePoint(display.BottomLeftReferencePoint)
+    					newBackgroundObject.y=newBackgroundObject.contentHeight + newBackgroundObject.contentHeight * .1
+    				end
+    				
+                    if(lastX+newBackgroundObject.contentWidth > (display.contentWidth - 100)) then
+                        newBackgroundObject:removeSelf()
+                    else
+                        newBackgroundGroup:insert(newBackgroundObject)
+            			newBackgroundObject.x=lastX
+        				lastX=lastX+newBackgroundObject.contentWidth * 1.1
+                    end
+    			end
+            end
 			return newBackgroundGroup;
 		end
 		
@@ -132,24 +178,45 @@ function BackgroundGenerator:generateBackground()
 				scene3.x=scene3.x - xOffset
 				
 				 if(scene2.contentBounds.xMin< 0)  and (scene3.contentBounds.xMin < display.contentWidth)  and (scene1.contentBounds.xMax < 0) then
-				 	print("Resetting scene1")
-				 	
-				 	--[[
-				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
-				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
-				 	
-				 	
-				 	print("Scene 2 xMin: "..tostring(scene2.contentBounds.xMin))
-				 	print("Scene 2 xMax: "..tostring(scene2.contentBounds.xMax))
-				 	
-				 	
-				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
-				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-				 	]]
-				 	
-				 	
-				 	
-				 	scene1randomObjects:removeSelf();
+                    if(backgroundType==2) then
+                        print("Resetting scene1 to backgroundType=1")
+                        backgroundType=1
+                        scene1:removeSelf()
+                        scene1=display.newGroup()
+                        backgroundGroup:insert(scene1)
+                        scene1:toBack()
+                        myBackground=display.newImageRect("images/game-1-iPad.png",1024,768)
+                        scene1:insert(myBackground)
+                        myBackground:toBack()
+                        myBackground:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground.x=0
+    		            myBackground.y=0
+                        
+                    elseif(backgroundType==1) then
+                        print("Resetting scene1 to backgroundType=2")
+                        backgroundType=2
+                        scene1:removeSelf()
+                        scene1=display.newGroup()
+                        backgroundGroup:insert(scene1)
+                        scene1:toBack()
+                        
+                        myBackground=display.newImageRect("images/game-2-end-iPad.png",1024,768)
+        	            scene1:insert(myBackground)
+                        
+                        myBackground:toBack()
+                        myBackground:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground.x=0
+    		            myBackground.y=0
+                        
+				 	end
+                     
+                    local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)
+                        myRect:setFillColor(255,0,0)
+                        scene1:insert(myRect)
+                        myRect:toBack()
+                        
+                        
+				 	--scene1randomObjects:removeSelf();
 					scene1randomObjects=display.newGroup()
 					
 					scene1randomObjects=generateBackgroundScenery()
@@ -163,52 +230,96 @@ function BackgroundGenerator:generateBackground()
 	
 				 if(scene3.contentBounds.xMin < 0)  and (scene1.contentBounds.xMin < display.contentWidth)  and (scene2.contentBounds.xMax < 0) then
 				 	print("Resetting scene2")
+                     print("Background Type: ", tostring(backgroundType))
+                     if(backgroundType==1) then
+            		 	scene2:removeSelf()
+                        scene2=display.newGroup()
+                        backgroundGroup:insert(scene2)
+                        scene2:toBack()
+            
+                        myBackground2=display.newImageRect("images/game-1-iPad.png",1024,768)
+        	            scene2:insert(myBackground2)
+                        myBackground2:toBack()
+                        myBackground2:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground2.x=0
+    		            myBackground2.y=0
+                     elseif(backgroundType==2) then
+        			 	scene2:removeSelf()
+                        scene2=display.newGroup()
+                        backgroundGroup:insert(scene2)
+                        scene2:toBack()
+                        
+                        myBackground2=display.newImageRect("images/game-2-center-iPad.png",1024,768)
+        	            scene2:insert(myBackground2)
+
+                        myBackground2:toBack()
+                        myBackground2:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground2.x=0
+    		            myBackground2.y=0
+				 	end
+                     
+                    local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)
+                    myRect:setFillColor(0,255,0)
+                    scene2:insert(myRect)
+                    myRect:toBack()
 				 	
-				 	--[[
-				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
-				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
-				 	
-				 	print("Scene 2 xMin: "..tostring(scene2.contentBounds.xMin))
-				 	print("Scene 2 xMax: "..tostring(scene2.contentBounds.xMax))
-				 	
-				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
-				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-					]]
-				 	
-				 	
-				 	scene2randomObjects:removeSelf()
+				 	--scene2randomObjects:removeSelf()
 					scene2randomObjects=display.newGroup()
 					
 					scene2randomObjects=generateBackgroundScenery()
 					scene2:insert(scene2randomObjects)
 					
-					print("Scene 2 Width: "..tostring(scene1.contentWidth))
+					print("Scene 2 Width: "..tostring(scene2.contentWidth))
 					
 					scene2.x=scene1.contentBounds.xMax
 				 	--scene2:translate(scene2.contentWidth * 2,0)
 				 end
 				 
 				 if(scene1.contentBounds.xMin < 0) and (scene2.contentBounds.xMin < display.contentWidth)  and (scene3.contentBounds.xMax < 0) then
-				 	print("Resetting scene3")
-				 	
-				 	--[[
-				 	print("Scene 1 xMin: "..tostring(scene1.contentBounds.xMin))
-				 	print("Scene 1 xMax: "..tostring(scene1.contentBounds.xMax))
-				 	
-				 	print("Scene 2 xMin: "..tostring(scene2.contentBounds.xMin))
-				 	print("Scene 2 xMax: "..tostring(scene2.contentBounds.xMax))
-				 	
-				 	print("Scene 3 xMin: "..tostring(scene3.contentBounds.xMin))
-				 	print("Scene 3 xMax: "..tostring(scene3.contentBounds.xMax))
-					]]
-				 	
-				 	
-				 	scene3randomObjects:removeSelf()
+				    print("Resetting scene3")
+                    print("Background Type: ", tostring(backgroundType))
+                    if(backgroundType==1) then
+                	 	scene3:removeSelf()
+                        scene3=display.newGroup()
+                        backgroundGroup:insert(scene3)
+                        scene3:toBack()
+                        
+                        myBackground3=display.newImageRect("images/game-1-iPad.png",1024,768)
+        	            scene3:insert(myBackground3)
+                        
+                        myBackground3:toBack()
+                        myBackground3:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground3.x=0
+    		            myBackground3.y=0
+                    elseif(backgroundType==2) then
+            		 	scene3:removeSelf()
+                        scene3=display.newGroup()
+                        backgroundGroup:insert(scene3)
+                        scene3:toBack()
+                        
+                        myBackground3=display.newImageRect("images/game-2-end-iPad.png",1024,768)
+                        --myBackground3:setReferencePoint(display.TopLeftReferencePoint)
+                        myBackground3:scale(-1,1)
+                        myBackground3:setReferencePoint(display.TopRightReferencePoint)
+                        myBackground3.x=0
+    		            myBackground3.y=0
+        	            scene3:insert(myBackground3)
+                        
+                        myBackground3:toBack()
+    			 	end
+                    --[[ 
+                    local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)
+                    myRect:setFillColor(0,0,255)
+                    scene3:insert(myRect)
+                    myRect:toBack()
+                     ]]--
+                 
+				 	--scene3randomObjects:removeSelf()
 					scene3randomObjects=display.newGroup()
 					
 					scene3randomObjects=generateBackgroundScenery()
 					scene3:insert(scene3randomObjects)
-					print("Scene 3 Width: "..tostring(scene1.contentWidth))
+					print("Scene 3 Width: "..tostring(scene3.contentWidth))
 										
 					scene3.x=scene2.contentBounds.xMax
 				 	--scene3:translate(scene3.contentWidth * 2,0)
@@ -225,7 +336,6 @@ function BackgroundGenerator:generateBackground()
 	end
 	
 	function onGameOver( self, event )
-		print("here")
 		shouldRepeat=false
 		Runtime:removeEventListener("enterFrame",moveBG)
 		Runtime:removeEventListener( "SignalGameOver", onGameOver )

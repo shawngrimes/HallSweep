@@ -39,9 +39,9 @@ function scene:createScene( event )
 -----------------------------------------------------------------------------------------
 
 -- Alison McGuire Hall Sweep Project
-local brickWall = display.newImage ("images/brick_wall.png")
+local brickWall = display.newImage ("images/summary-iPad.png")
 group:insert(brickWall)
-brickWall:scale(2,2)
+brickWall:scale(1,1)
 brickWall.x = display.contentWidth/2
 brickWall.y = display.contentHeight/2
 
@@ -61,65 +61,38 @@ local myButtonEvent = function (event)
 	end
 end 
 	
-local mybutton=widget.newButton{id="mainMenuButton", default="images/btn-menu-up@2x.png", over="images/btn-menu-down@2x.png", onEvent= myButtonEvent }
+local mybutton=widget.newButton{id="mainMenuButton", default="images/btn-menu-up-iPad.png", over="images/btn-menu-down-iPad.png", onEvent= myButtonEvent }
 group:insert(mybutton)
-mybutton.x=display.contentWidth - mybutton.contentWidth/2
-mybutton.y=mybutton.contentHeight/2
+mybutton.x=display.contentWidth - mybutton.contentWidth/1
+mybutton.y=mybutton.contentHeight/1
 
 
 
-local mybutton2=widget.newButton{id="playAgain", default="images/btn-playagain-up@2x.png", over="images/btn-playagain-down@2x.png", onEvent= myButtonEvent }
+local mybutton2=widget.newButton{id="playAgain", default="images/btn-scores-up-iPad.png", over="images/btn-scores-down-iPad.png", onEvent= myButtonEvent }
 group:insert(mybutton2)
-mybutton2.x=0 + mybutton2.contentWidth/2
-mybutton2.y=mybutton2.contentHeight/2
+mybutton2.x=0 + mybutton2.contentWidth/1
+mybutton2.y=mybutton2.contentHeight/1
+
+local Patriot=display.newImageRect("images/patriot-3-iPad.png",270,226) 
+group:insert(Patriot)
+Patriot.x= Patriot.contentWidth
+Patriot.y= display.contentHeight - Patriot.contentHeight
+
+local Principal=display.newImageRect("images/imbriale-iPad@2x.png",228,412)
+group:insert(Principal)
+Principal:scale (.55,.55)
+Principal.x= display.contentWidth - Principal.contentWidth/.5
+Principal.y= display.contentHeight - Principal.contentHeight
 
 
 
 
 
 
-patriot = display.newImage ("images/patriot.png", 10, 20)
-group:insert(patriot)
-
-patriot.x= display.contentWidth - patriot.contentWidth/2
-patriot.y= display.contentHeight - patriot.contentHeight/2
-
-bully = display.newImage ("images/bully.png", 10, 20)
-group:insert(bully)
-
-bully.x= bully.contentWidth/2
-bully.y= display.contentHeight - bully.contentHeight/2
-
-title = display.newImage("images/hall_sweep_title@2x.png")
-group:insert(title)
-title.x=display.contentCenterX
-title.y=mybutton2.contentBounds.yMax + title.contentHeight/2
-
-myTextObject2= display.newText ("Score:1500",0,0,native.systemFontbold, 25)
-group:insert(myTextObject2)
-myTextObject2:setTextColor(0,255,0)
-
-myTextObject2.x= display.contentCenterX
-myTextObject2.y= title.contentBounds.yMax + myTextObject2.contentHeight
-
-myTextObject3= display.newText ("Distance:600ft",0,0,native.systemFontbold, 25)
-group:insert(myTextObject3)
-myTextObject3.x= display.contentCenterX
-myTextObject3.y= myTextObject2.contentBounds.yMax + myTextObject3.contentHeight
-
-myTextObject4= display.newText ("Coins: 75",0,0,native.systemFontBold, 25)
-group:insert(myTextObject4)
-myTextObject4.x= display.contentCenterX
-myTextObject4.y= myTextObject3.contentBounds.yMax + myTextObject4.contentHeight
-myTextObject4:setTextColor(0,0,255)
 
 
-local mybutton3=widget.newButton{
-	id="highscoreButton", 
-	default="images/btn_high_scores_up@2x.png", 
-	over="images/btn_high_scores_down@2x.png", 
-	onEvent= myButtonEvent 
-}
+local mybutton3=widget.newButton{ id="highscoreButton", default="images/btn-playagain-up-iPad.png", over="images/btn-playagain-down-iPad.png", 
+onEvent= myButtonEvent }
 
 group:insert(mybutton3)
 

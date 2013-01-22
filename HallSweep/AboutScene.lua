@@ -31,32 +31,72 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-	local mybackground = display.newImage("images/brick_wall.png")
+	local mybackground = display.newImage("images/about-iPad.png")
 	mybackground:setReferencePoint(display.CenterReferencePoint)
 	mybackground.x=display.contentCenterX 
 	mybackground.y=display.contentCenterY
-	mybackground:scale(3,4)
 	group:insert(mybackground)
 	
+	local widget = require "widget"
 	
-	local myImage = display.newImage("images/btn-website-up-iPad.png")
-	myImage:scale(.75,.75)
-	myImage.x=display.contentCenterX 
-	myImage.y=display.contentCenterY
-	group:insert(myImage)
+	local myButtonEvent = function (event)
+		if event.phase == "release" then
+			print ("You pressed and released the "..event.target.id.."button!")
+			if(event.target.id == "twitterButton") then
+				system.openURL( "https://twitter.com/APPliedClub" )
+			elseif(event.target.id == "facebookButton") then
+				system.openURL ( "http://www.facebook.com/APPliedClub" )
+			elseif(event.target.id == "websiteButton") then
+				system.openURL( "http://www.appliedclub.org/phs/" )
+            elseif(event.target.id == "mainMenuButton") then
+                storyboard.gotoScene("MainMenuScene","fade",1000)
+			end
+		end
+	end
 	
-	local myTextObject = display.newText("Designed by:", 50, 700, native.systemFont, 45)
+	local twitterButton=widget.newButton{
+	id="twitterButton", 
+	default="images/btn-twitter-up-iPad.png", 
+	over="images/btn-twitter-down-iPad.png", 
+	onEvent= twitterButtonEvent 
+	}
+group:insert(twitterButton)
+twitterButton.x=display.contentWidth/1.3
+twitterButton.y=display.contentHeight/2 - twitterButton.contentHeight/2
+
+	local facebookButton=widget.newButton{
+	id="facebookButton",
+	default="images/btn-facebook-up-iPad.png",
+	over="images/btn-facebook-down-iPad.png",
+	onEvent= facebookButtonEvent
+	} 
+group:insert(facebookButton)
+facebookButton.x=display.contentWidth/1.3
+facebookButton.y=display.contentHeight/1.6 - facebookButton.contentHeight/2
+
+	local websiteButton=widget.newButton{
+	id="websiteButton",
+	default="images/btn-website-up-iPad.png",
+	over="images/btn-website-down-iPad.png",
+	onEvent= websiteButtonEvent
+	} 
+group:insert(websiteButton)
+websiteButton.x=display.contentWidth/1.3
+websiteButton.y=display.contentHeight/1.3 - websiteButton.contentHeight/2
+
+	local mybutton=widget.newButton{
+	id="mainMenuButton", 
+	default="images/btn-menu-up-iPad.png", 
+	over="images/btn-menu-down-iPad.png", 
+	onEvent= myButtonEvent 
+	}
+group:insert(mybutton)
+mybutton.x=display.contentWidth/1.3
+mybutton.y=display.contentHeight/1.1 - mybutton.contentHeight/2
+
 	
-	local myBack = display.newImage("images/btn-facebook-up-iPad.png")
-	myBack.y=display.contentCenterY
-	myBack:scale(.5,.5)
-	group:insert(myBack)
 	
-	local myWeb = display.newImage("images/btn-twitter-up-iPad.png")
-	myWeb.y=display.contentCenterY	
-	myWeb.x=display.contentWidth - myWeb.contentWidth/4
-	myWeb:scale(.5,.5)	
-	group:insert(myWeb)	
+	
 end
 
 

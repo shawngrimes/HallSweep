@@ -32,7 +32,7 @@ function scene:createScene( event )
         -----------------------------------------------------------------------------
 		
 --		local highscoresObject=display.newText("High Scores",0,0,native.systemFontBold,96)
-local highscoresObject=display.newImage("images/header-scores@2x.png")
+local highscoresObject=display.newImage("images/scores-iPad.png")
 		group:insert(highscoresObject)
 highscoresObject.x = display.contentCenterX
 highscoresObject.y = highscoresObject.contentHeight/2
@@ -113,17 +113,17 @@ myImage.y=display.contentCenterY
 		group:insert(myImage)
 myImage:toBack()
 
-local myImageMouse = display.newImage( "images/rocketmouse_4_run@2x.png" )
-group:insert(myImageMouse)
+local myImagePatriot = display.newImage( "images/patriot-5-iPad.png" )
+group:insert(myImagePatriot)
 
-myImageMouse:setReferencePoint(display.BottomLeftReferencePoint)
+myImagePatriot:setReferencePoint(display.BottomLeftReferencePoint)
 --Change the reference point of the object
 
-myImageMouse.x=0
+myImagePatriot.x=0
 --This will add a buffer of half the objects width, if you want it flush with the
 --left, change it to myObject.x=0
 
-myImageMouse.y=display.contentHeight 
+myImagePatriot.y=display.contentHeight 
 --This will add a buffer of half the object's height, if you want it flush
 --bottom, change it to myObject.y=display.contentHeight
 

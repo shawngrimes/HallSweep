@@ -23,6 +23,7 @@ local scene = storyboard.newScene()
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
+        
 		
 		--Show physics drawing lines, for help with debugging
 		--physics.setDrawMode( "hybrid" )
@@ -67,29 +68,6 @@ function scene:createScene( event )
 		--Now we connect the mouse to the piston point
 		myPistonJoint = physics.newJoint( "piston", Patriot.patriotBody, pistonGroundPoint, Patriot.x,Patriot.y, 0,-display.contentHeight )
 		
-		
-		
-		local onGameOver=function()
-			--[[
-			print("First onGameOver: Num Objects in Group: "..tostring(group.numChildren))
-			Runtime:removeEventListener( "SignalGameOver", onGameOver )
-			print("Creating gameOverText")
-		    local gameOverText=display.newText("Game Over",0,0,native.systemFontBold,128)
-		    print("gameOverText: "..gameOverText.text)
-		    print("onGameOver: Num Objects in Group: "..tostring(group.numChildren))
-		    group:insert(gameOverText)
-		    
-		    gameOverText.x=display.contentCenterX
-		    gameOverText.y=display.contentCenterY
-		    ]]
-		    
-		    local changeScene=function()
-		    	storyboard.gotoScene("GameOverScene","fade",1000)
-		    end
-		    
-		    timer.performWithDelay(2000,changeScene)
-
-		end
 
 		local BackgroundGenerator=require("BackgroundGenerator")
 		local backgroundGroup, foregroundGroup=BackgroundGenerator:generateBackground()
@@ -109,14 +87,84 @@ function scene:createScene( event )
 		local Spitball=require("Spitball")
 		group:insert(Spitball.new())
 		
+		local HallPasses=require("HallPasses")
+		group:insert(HallPasses.new())
+		
+		local Coins=require("Coins")
+        --group:insert(Coins.new())
+        --local returnedCoins=Coins.newThreeInAColumn()
+        
+        local randomCoins
+        local coinTimer1
+        local coinTimer2
+        local function generateCoins()
+            local returnedCoins=Coins.newMattCoins()
+            for i = 1, #returnedCoins do
+                print("Returned: ",tostring(returnedCoins))
+                group:insert(returnedCoins[i])
+            end
+            coinTimer1=timer.performWithDelay(math.random(1000,5000),randomCoins,1)
+        end
+        
+         function randomCoins()
+        	local randomStartTime=math.random(1000,30000)
+            --local randomStartTime=math.random(1000,3000)
+    		coinTimer2=timer.performWithDelay(randomStartTime,generateCoins,1)
+    	end
+        
+        randomCoins()
+        
+		--group:insert(Coins.newMattCoins())
+		
+		
 		backgroundGroup:toBack()
 		foregroundGroup:toFront()
 		
+        local hallPassLabel=display.newText("x0",0,0,native.systemFontBold,72)
+        local hallPassImage=display.newImageRect("images/object-pass-iPad.png",102,64)
+        group:insert(hallPassLabel)
+        group:insert(hallPassImage)
+        hallPassImage.x=738
+        hallPassImage.y=680
+        hallPassLabel.x=hallPassImage.x + hallPassImage.contentWidth * 1
+    	hallPassLabel.y=hallPassImage.y
+        
+        local coinlabel=display.newText("x0",0,0, native.systemFontBold,72)
+        local coinImage=display.newImageRect("images/object-coin-iPad.png", 54, 53 )
+        group:insert(coinlabel)
+        group:insert(coinImage)
+		
+        coinImage.x=hallPassImage.x
+        coinlabel.x=coinImage.contentBounds.xMax + coinlabel.contentWidth * .5
+		coinlabel.y=hallPassLabel.y - coinlabel.contentHeight
+        coinImage.y=coinlabel.y
+        
+        local function updateCoins()
+            --coinImage.x=coinlabel.x + coinlabel.contentWidth * .7
+            coinlabel.text=string.format("x%s", tostring(Patriot.getCoinCount()))
+            coinlabel.x=coinImage.contentBounds.xMax + coinlabel.contentWidth * .5
+            hallPassLabel.text=string.format("x%s", tostring(Patriot.getHallPasses()))
+        end
+        Runtime:addEventListener("enterFrame",updateCoins)
+        
 		
 		group:insert(letterboxBorder({r=0,g=0,b=0}))
 		
 		print("Create Scene: Num Objects in Group: "..tostring(group.numChildren))
-	
+	    local onGameOver=function()
+    	    Runtime:removeEventListener("enterFrame",updateCoins)
+		    local changeScene=function()
+		    	storyboard.gotoScene("GameOverScene","fade",1000)
+		    end
+            if(coinTimer1~=nil) then
+		        timer.cancel(coinTimer1)
+            end
+            if(coinTimer2~=nil) then
+                timer.cancel(coinTimer2)
+            end
+		    timer.performWithDelay(2000,changeScene)
+
+		end
 		Runtime:addEventListener( "SignalGameOver", onGameOver )
 		
 end
@@ -136,7 +184,7 @@ function scene:willEnterScene( event )
 		if(gameBackgroundMusicChannel~=nil) then
 			audio.stop(gameBackgroundMusicChannel)
 		end
-		backgroundMusicChannel=audio.play(titleBackgroundMusicObject, {loops=-1})
+		--backgroundMusicChannel=audio.play(titleBackgroundMusicObject, {loops=-1})
 end
 
 
@@ -150,11 +198,6 @@ function scene:enterScene( event )
 		group:insert(getToClassLabel)
 		getToClassLabel.x=display.contentWidth/2
 		getToClassLabel:setTextColor(0,0,255)
-		
-		local coinlabel=display.newText("0 coins",0,0, native.systemFontBold,72)
-		group:insert(coinlabel)
-		coinlabel.x=display.contentWidth - coinlabel.contentWidth
-		coinlabel.y=display.contentHeight - coinlabel.contentHeight
 
 	    local function removeGetToClassLabel(event)
 	        getToClassLabel:removeSelf()
