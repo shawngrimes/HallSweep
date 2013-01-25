@@ -32,7 +32,7 @@ function scene:createScene( event )
         -----------------------------------------------------------------------------
 		
 --		local highscoresObject=display.newText("High Scores",0,0,native.systemFontBold,96)
-local highscoresObject=display.newImage("images/scores-iPad.png")
+local highscoresObject=display.newImageRect("images/scores-iPad.png",1024,768)
 		group:insert(highscoresObject)
 highscoresObject.x = display.contentCenterX
 highscoresObject.y = highscoresObject.contentHeight/2
@@ -55,9 +55,9 @@ end
 local playAgainButton=widget.newButton{
  id = "playAgainButton",
  --this is the default button image
- default="images/btn-playagain-up@2x.png",
+ default="images/btn-playagain-up-iPad.png",
  --this is the image to use when the button is pressed
- over="images/btn-playagain-down@2x.png",
+ over="images/btn-playagain-down-iPad.png",
  --this tells it what function to call when you press the button
   onEvent = onButtonEvent
 }
@@ -70,9 +70,9 @@ playAgainButton.y = display.contentHeight - playAgainButton.contentHeight
 local mainMenuButton=widget.newButton{
  id = "mainMenuButton",
  --this is the default button image
- default="images/btn-menu-up@2x.png",
+ default="images/btn-menu-up-iPad.png",
  --this is the image to use when the button is pressed
- over="images/btn-menu-down@2x.png",
+ over="images/btn-menu-down-iPad.png",
  --this tells it what function to call when you press the button
   onEvent = onButtonEvent
 }
@@ -107,13 +107,7 @@ local scoreObject2=display.newText("95 ft",0,0,native.systemFont,55)
 scoreObject2.y=scoreObject1.y + scoreObject2.contentHeight
 scoreObject2.x=display.contentWidth - scoreObject1.contentWidth
 
-local myImage = display.newImageRect("images/background1@2x.png",960,640)
-myImage.x=display.contentCenterX
-myImage.y=display.contentCenterY
-		group:insert(myImage)
-myImage:toBack()
-
-local myImagePatriot = display.newImage( "images/patriot-5-iPad.png" )
+local myImagePatriot = display.newImageRect( "images/patriot-5-iPad.png",270,226 )
 group:insert(myImagePatriot)
 
 myImagePatriot:setReferencePoint(display.BottomLeftReferencePoint)

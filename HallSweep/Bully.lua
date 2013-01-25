@@ -55,13 +55,13 @@ function MyCharacter.new()
 	bully.shouldMoveCharacter()
 	
 	
-	function onGameOver( self, event )
+	function bullyOnGameOver( self, event )
 		shouldRepeat=false
-		bully:removeEventListener( "SignalGameOver", bully )
+		Runtime:removeEventListener( "SignalGameOver", bullyOnGameOver )
 	end
 	 
 	bully.SignalGameOver = onGameOver
-	Runtime:addEventListener( "SignalGameOver", bully )
+	Runtime:addEventListener( "SignalGameOver", bullyOnGameOver )
 
 	return bully;
 end

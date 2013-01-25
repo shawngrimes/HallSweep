@@ -8,6 +8,8 @@ local MyCharacter={}
 function MyCharacter.new()
     local hallPassesCount=0
 	local coinCount=0
+    local distance=0
+    local deadPatriot=false
 	
 	--Load animation module
 	local movieMachine=require "movieclip";
@@ -53,9 +55,12 @@ function MyCharacter.new()
 	newPatriot.isFlying=false
 	extinguisherFog.isVisible=false
 	local function movePatriot()
-	--align fog with patriot body
-    extinguisherFog.x=movingPatriot.x - extinguisherFog.contentWidth * 1.75
-    extinguisherFog.y=movingPatriot.y+(extinguisherFog.contentHeight * .75)
+        distance=distance+1
+	    --align fog with patriot body
+        --extinguisherFog.x=movingPatriot.x - extinguisherFog.contentWidth * 1.75
+        extinguisherFog.x=movingPatriot.x-extinguisherFog.contentWidth *2
+        --extinguisherFog.y=movingPatriot.y+(extinguisherFog.contentHeight * .75)
+        extinguisherFog.y=movingPatriot.y + extinguisherFog.contentHeight * .65
 		vx, vy = movingPatriot:getLinearVelocity()		
 		
 		--print("Pat Y: "..tostring(Patriot.y))
@@ -95,13 +100,18 @@ function MyCharacter.new()
 	
 	
 	local function crashPatriot()
-		movingPatriot:removeEventListener("collision", movingPatriot)
-		movingPatriot:play({startFrame=7,endFrame=9,loop=1})
-		Runtime:removeEventListener("enterFrame",movePatriot)
-		Runtime:removeEventListener("touch", onTouch)
-		Runtime:dispatchEvent({name="SignalGameOver"})
-	
-	    extinguisherFog.isVisible=false
+        if(deadPatriot==false) then
+            deadPatriot=true
+		    movingPatriot:removeEventListener("collision", movingPatriot)
+		    movingPatriot:play({startFrame=7,endFrame=9,loop=1})
+    		Runtime:removeEventListener("enterFrame",movePatriot)
+    		Runtime:removeEventListener("touch", onTouch)
+            print("Dispatching Game Over");
+    		Runtime:dispatchEvent({name="SignalGameOver"})
+    	
+    	    extinguisherFog.isVisible=false
+        end
+            
 	end
 	
 	local lastCollisionWith=""
@@ -116,7 +126,7 @@ function MyCharacter.new()
         if ( event.phase == "began") then
             print("Collision With: ", event.other.myName)
     	    print("Last Collision With: ",tostring(lastCollisionWith))
-        	if((event.other.myName == "bully" or event.other.myName=="OfficerRay")  and (lastCollisionWith ~= event.other.myName)) then
+        	if((event.other.myName == "bully" or event.other.myName=="OfficerRay" or event.other.myName=="imbriale")  and (lastCollisionWith ~= event.other.myName)) then
                 lastCollisionWith=event.other.myName
                 timer.performWithDelay(500,resetLastCollision)
 				print("Hall Pass?", newPatriot.getHallPasses())
@@ -126,7 +136,7 @@ function MyCharacter.new()
 				else 
 					crashPatriot()
 				end
-    	    elseif(event.other.myName == "spitball"  and (lastCollisionWith ~= event.other.myName)) then
+    	    elseif((event.other.myName == "spitball" or event.other.myName == "flyingBook")  and (lastCollisionWith ~= event.other.myName)) then
                 lastCollisionWith=event.other.myName
                 timer.performWithDelay(500,resetLastCollision)
                 if (newPatriot.getHallPasses()>=1) then 
@@ -155,6 +165,10 @@ function MyCharacter.new()
 	
 	newPatriot.getHallPasses = function()
         return hallPassesCount
+    end
+    
+    newPatriot.getDistance = function()
+        return distance;
     end
     
     newPatriot.getCoinCount=function()

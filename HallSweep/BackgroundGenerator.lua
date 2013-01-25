@@ -209,12 +209,13 @@ function BackgroundGenerator:generateBackground()
     		            myBackground.y=0
                         
 				 	end
-                     
+                    --Uncomment for testing
+                    --[[
                     local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)
                         myRect:setFillColor(255,0,0)
                         scene1:insert(myRect)
                         myRect:toBack()
-                        
+                        ]]
                         
 				 	--scene1randomObjects:removeSelf();
 					scene1randomObjects=display.newGroup()
@@ -258,11 +259,14 @@ function BackgroundGenerator:generateBackground()
     		            myBackground2.y=0
 				 	end
                      
+                     --Uncomment for testing
+                     --[[
                     local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)
                     myRect:setFillColor(0,255,0)
                     scene2:insert(myRect)
                     myRect:toBack()
-				 	
+				 	]]
+                     
 				 	--scene2randomObjects:removeSelf()
 					scene2randomObjects=display.newGroup()
 					
@@ -335,13 +339,13 @@ function BackgroundGenerator:generateBackground()
 		
 	end
 	
-	function onGameOver( self, event )
+	function backgroundOnGameOver( self, event )
 		shouldRepeat=false
 		Runtime:removeEventListener("enterFrame",moveBG)
-		Runtime:removeEventListener( "SignalGameOver", onGameOver )
+		Runtime:removeEventListener( "SignalGameOver", backgroundOnGameOver )
 	end
 	 
-	Runtime:addEventListener( "SignalGameOver", onGameOver )
+	Runtime:addEventListener( "SignalGameOver", backgroundOnGameOver )
 
 	return backgroundGroup, foregroundGroup
 end

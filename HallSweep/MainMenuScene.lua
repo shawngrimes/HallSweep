@@ -31,10 +31,22 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-	local mybackground = display.newImageRect("images/title@2x.png",960,640)
+	local mybackground = display.newImageRect("images/title-iPad.png",1024,768)
 	mybackground.x=display.contentCenterX
 	mybackground.y=display.contentCenterY
 	group:insert(mybackground)
+    
+    local patriot=display.newImageRect("images/patriot-mainScreen-iPad.png",539,451)
+    local patriotFog=display.newImageRect("images/fog-mainScreen-iPad.png",156,190)
+    group:insert(patriotFog)
+    group:insert(patriot)
+    patriot:scale(.75,.75)
+    patriotFog:scale(.75,.75)
+    patriot.x=display.contentCenterX + patriot.contentWidth * .3
+    patriot.y=display.contentCenterY + patriot.contentHeight * .2
+    patriotFog.x=patriot.x-patriotFog.contentWidth *2
+    patriotFog.y=patriot.y + patriotFog.contentHeight * .65
+    
 		
 local widget = require "widget"
 
@@ -54,8 +66,8 @@ local myButton=widget.newButton{
 	right = 100, 
 	top = 200, 
 	--width = 120, height = 50, 
-	default="images/btn-play-up@2x.png",
-	over="images/btn-play-down@2x.png",
+	default="images/btn-play-up-iPad.png",
+	over="images/btn-play-down-iPad.png",
 	onEvent = myButtonEvent
 	}
 	
@@ -70,8 +82,8 @@ local myButton2=widget.newButton{
 	left = 100, 
 	top = 200, 
 	--width = 120, height = 50, 
-	default="images/btn-about-up@2x.png",
-	over="images/btn-about-down@2x.png",
+	default="images/btn-about-up-iPad.png",
+	over="images/btn-about-down-iPad.png",
 	onEvent = myButtonEvent
 	}
 	

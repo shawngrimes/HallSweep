@@ -5,7 +5,7 @@ settings = {
 	
 	orientation = {
 		default = "landscapeRight",
-		supported = { "landscapeRight", }
+		supported = { "landscapeRight", "landscapeLeft"}
 	},
 	
 	iphone = {
@@ -29,13 +29,10 @@ settings = {
             --]]
 		}
 	},
-	
-	--[[
+
 	-- Android permissions
 
 	androidPermissions = {
   		"android.permission.INTERNET",
   	},
-
-	]]--
 }

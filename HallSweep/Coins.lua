@@ -26,32 +26,20 @@ function MyCharacter.newCoin()
 		--Move the start position to the far right of the screen
 	coin.x=display.contentWidth + coin.contentWidth * 3
 	
-	local function removeObject(object)
-         if(object.transition~=nil) then
-            transition.cancel(object.transition)
-            object.transition=nil
-        end
-        Runtime:removeEventListener( "SignalGameOver", coin )
-		object:removeSelf()
-		object=nil;
-	end
-	coin.transitionComplete = removeObject
-    
 	--Set your character's speed
 	coin.speed=6  -- Try changing this number to adjust the speed
-
-
-    function onGameOver( self, event )
+    
+    local function coinsOnGameOver( self, event )
     	shouldRepeat=false
         if(coin.transition~=nil) then
             transition.cancel(coin.transition)
             coin.transition=nil
+            coin:removeSelf();
         end
-		Runtime:removeEventListener( "SignalGameOver", coin )
-	end
-	 
-	coin.SignalGameOver = onGameOver
-	Runtime:addEventListener( "SignalGameOver", coin )
+		Runtime:removeEventListener( "SignalGameOver", coinsOnGameOver )
+	end 
+	coin.SignalGameOver = coinsOnGameOver
+	Runtime:addEventListener( "SignalGameOver", coinsOnGameOver )
 	
 	return coin
 end
@@ -89,17 +77,17 @@ function MyCharacter.newThreeInAColumn()
 			coin.y=topCoinY
 		end
         
-        function onGameOver( self, event )
+        function coinsOnGameOver( self, event )
             shouldRepeat=false
             if(coin.transition~=nil) then
                 transition.cancel(coin.transition)
                 coin.transition=nil
             end
-    		coin:removeEventListener( "SignalGameOver", coin )
+    		Runtime:removeEventListener( "SignalGameOver", coinsOnGameOver )
     	end
     	 
     	coin.SignalGameOver = onGameOver
-    	Runtime:addEventListener( "SignalGameOver", coin )
+    	Runtime:addEventListener( "SignalGameOver", coinsOnGameOver )
         
 		coins[counter]=coin
 	end
@@ -119,13 +107,13 @@ function MyCharacter.newThreeInAColumn()
 	
 	local function repeatCharacter()
 		if(shouldRepeat) then
+            shouldRepeat=false
             for i = 1, #coins do
                 coins[i].isVisible=true
     			coins[i].x=display.contentWidth
     			coins[i].transition=transition.to(coins[i],{time=travelTime,
     									x=-2 * coins[i].contentWidth,
     									onComplete=coins[i].shouldMoveCharacter})
-    			shouldRepeat=false
             end
 		end
 	end
@@ -280,10 +268,27 @@ function MyCharacter.newMattCoins()
     
     	local distanceToTravel=coin.x - (-2 * coin.contentWidth)
         local travelTime=distanceToTravel/(1/coin.speed)
-    	--print("Travel Time: ", travelTime)
+        
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
+            end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                --[[if pcall(function() object:removeSelf() end) then
+                    else
+                    object = nil -- just making sure
+                end
+                ]]
+                object:removeSelf();
+            end
+        end
+    	coin.transitionComplete = removeObject
+        
         coin.transition=transition.to(coin,{time=travelTime,
             								x=-2 * coin.contentWidth,
-        									onComplete=coin.transitionComplete})
+        									onComplete=removeObject})
         
         coins[counter]=coin
 	end

@@ -181,6 +181,56 @@ function M.physicsData(scale)
                     
 		}
 		
+		, 
+		["imbriale-2-iPad"] = {
+                    
+                    
+                    
+                    
+                    {
+                    pe_fixture_id = "", density = 50, friction = 1, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65534, groupIndex = 0 },
+                    shape = {   0, -106  ,  29, -78  ,  16, -28  ,  -20, -11  ,  -49, -36  ,  -52, -70  ,  -43, -101  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "", density = 50, friction = 1, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65534, groupIndex = 0 },
+                    shape = {   36, 32  ,  -16, 53  ,  -35, 38  ,  -20, -11  ,  16, -28  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "", density = 50, friction = 1, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65534, groupIndex = 0 },
+                    shape = {   -11, 106  ,  -22, 104  ,  -16, 53  ,  36, 32  ,  22, 106  }
+                    }
+                    
+                    
+                    
+		}
+		
+		, 
+		["book-iPad"] = {
+                    
+                    
+                    
+                    
+                    {
+                    pe_fixture_id = "", density = 10, friction = 1, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65534, groupIndex = 0 },
+                    shape = {   -6, -59  ,  31, -39  ,  57, 18  ,  -13, 8  ,  -55, -23  }
+                    }
+                     ,
+                    {
+                    pe_fixture_id = "", density = 10, friction = 1, bounce = 0, 
+                    filter = { categoryBits = 1, maskBits = 65534, groupIndex = 0 },
+                    shape = {   10, 59  ,  -6, 31  ,  -13, 8  ,  57, 18  }
+                    }
+                    
+                    
+                    
+		}
+		
 	} }
 
         -- apply scale factor

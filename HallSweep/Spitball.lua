@@ -29,15 +29,15 @@ function MyCharacter.new()
 	spitball.rotateTimer=timer.performWithDelay(600, spitRotate, 0 )
 	
 	
-	function onGameOver( self, event )
+	function spitballOnGameOver( self, event )
 		shouldRepeat=false
-		Runtime:removeEventListener( "SignalGameOver", spitball )
+		Runtime:removeEventListener( "SignalGameOver", spitballOnGameOver )
 	end
 	spitball.SignalGameOver = onGameOver
 	
 	local function removeObject(object)
 		timer.cancel(spitball.rotateTimer)
-		spitball:removeEventListener( "SignalGameOver", spitball )
+		Runtime:removeEventListener( "SignalGameOver", spitball )
 		spitball:removeSelf()
 		spitball=nil;
 	end
@@ -61,14 +61,14 @@ function MyCharacter.new()
 	end
 	
 	spitball.shouldMoveCharacter = function()
-		local randomStartTime=math.random(1000,5000)
+		local randomStartTime=math.random(3000,15000)
 		timer.performWithDelay(randomStartTime,repeatCharacter,1)
 	end
 	
 	spitball.shouldMoveCharacter()
 	
 	
-	Runtime:addEventListener( "SignalGameOver", spitball )
+	Runtime:addEventListener( "SignalGameOver", spitballOnGameOver )
 
 	return spitball
 end

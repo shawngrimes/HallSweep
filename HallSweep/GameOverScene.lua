@@ -2,7 +2,7 @@ module(..., package.seeall)
 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-
+local coinsCollectedLabel
 
 
 ----------------------------------------------------------------------------------
@@ -23,23 +23,21 @@ local scene = storyboard.newScene()
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
+print("-------------EVENT------------");
+for k,v in pairs(event) do 
+    print(k,v) 
+    if(type(v) == "table") then
+        for l,m in pairs(v) do
+            print("    ",l,m)
+        end
+    end
+end
+print("-------------EVENT------------");
 
-        -----------------------------------------------------------------------------
-
-        --      CREATE display objects and add them to 'group' here.
-        --      Example use-case: Restore 'group' from previously saved state.
-
-        -----------------------------------------------------------------------------
-		
-		
-		-----------------------------------------------------------------------------------------
---
--- main.lua
---
------------------------------------------------------------------------------------------
+    local params=event.params
 
 -- Alison McGuire Hall Sweep Project
-local brickWall = display.newImage ("images/summary-iPad.png")
+local brickWall = display.newImageRect("images/summary-iPad.png",1024,768)
 group:insert(brickWall)
 brickWall:scale(1,1)
 brickWall.x = display.contentWidth/2
@@ -61,44 +59,66 @@ local myButtonEvent = function (event)
 	end
 end 
 	
-local mybutton=widget.newButton{id="mainMenuButton", default="images/btn-menu-up-iPad.png", over="images/btn-menu-down-iPad.png", onEvent= myButtonEvent }
+local mybutton=widget.newButton{
+    id="mainMenuButton", 
+    default="images/btn-menu-up-iPad.png", 
+    over="images/btn-menu-down-iPad.png", 
+    onEvent= myButtonEvent 
+    }
 group:insert(mybutton)
 mybutton.x=display.contentWidth - mybutton.contentWidth/1
 mybutton.y=mybutton.contentHeight/1
 
 
 
-local mybutton2=widget.newButton{id="playAgain", default="images/btn-scores-up-iPad.png", over="images/btn-scores-down-iPad.png", onEvent= myButtonEvent }
+local mybutton2=widget.newButton{
+    id="highscoreButton", 
+    default="images/btn-scores-up-iPad.png",
+    over="images/btn-scores-down-iPad.png", 
+    onEvent= myButtonEvent 
+    }
 group:insert(mybutton2)
 mybutton2.x=0 + mybutton2.contentWidth/1
 mybutton2.y=mybutton2.contentHeight/1
 
-local Patriot=display.newImageRect("images/patriot-3-iPad.png",270,226) 
+local Patriot=display.newImageRect("images/summary-patriot-iPad.png",140,210) 
 group:insert(Patriot)
-Patriot.x= Patriot.contentWidth
+Patriot.x= Patriot.contentWidth * 1.5
 Patriot.y= display.contentHeight - Patriot.contentHeight
 
-local Principal=display.newImageRect("images/imbriale-iPad@2x.png",228,412)
+local Principal=display.newImageRect("images/imbriale-iPad.png",114,206)
 group:insert(Principal)
-Principal:scale (.55,.55)
 Principal.x= display.contentWidth - Principal.contentWidth/.5
 Principal.y= display.contentHeight - Principal.contentHeight
 
-
-
-
-
-
-
-
-local mybutton3=widget.newButton{ id="highscoreButton", default="images/btn-playagain-up-iPad.png", over="images/btn-playagain-down-iPad.png", 
-onEvent= myButtonEvent }
+local mybutton3=widget.newButton{ 
+    id="playAgain",
+    default="images/btn-playagain-up-iPad.png", 
+    over="images/btn-playagain-down-iPad.png", 
+    onEvent= myButtonEvent 
+    }
 
 group:insert(mybutton3)
 
 mybutton3.x=display.contentCenterX
 mybutton3.y=display.contentHeight - mybutton3.contentHeight
 
+    coinsCollectedLabel=display.newText(tostring(params.coinsCollected),460,460,native.systemFontBold,72)
+    coinsCollectedLabel:setTextColor(0,0,0);
+    group:insert(coinsCollectedLabel);    
+    
+    local distanceString=string.format("%s feet", tostring(math.floor(params.distanceTraveled/30)));
+    local distanceTraveledLabel=display.newText(distanceString,580,280,native.systemFontBold,30)
+    distanceTraveledLabel.x=700;
+    distanceTraveledLabel:setTextColor(0,0,0);
+    group:insert(distanceTraveledLabel);    
+
+    local scoreString=string.format("%s points", tostring(math.floor(params.distanceTraveled/30) + math.floor(.5 * params.coinsCollected)));
+    local scoreLabel=display.newText(scoreString,580,280,native.systemFontBold,30)
+    scoreLabel.x=285;
+    scoreLabel.y=distanceTraveledLabel.y
+    scoreLabel:setTextColor(0,0,0);
+    group:insert(scoreLabel);    
 
 end
 
@@ -126,6 +146,7 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
         -----------------------------------------------------------------------------
+        storyboard.removeScene( "GameScene" )
 end
 
 
@@ -150,7 +171,9 @@ function scene:didExitScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-
+        --coinsCollectedLabel:removeSelf()
+        --coinsCollectedLabel=nil
+        storyboard.removeScene( "GameOverScene" )
 end
 
 

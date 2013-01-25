@@ -57,13 +57,13 @@ function MyCharacter.new()
 	officerRay.shouldMoveCharacter()
 	
 	
-	function onGameOver( self, event )
+	function rayOnGameOver( self, event )
 		shouldRepeat=false
-		officerRay:removeEventListener( "SignalGameOver", officerRay )
+		Runtime:removeEventListener( "SignalGameOver", rayOnGameOver )
 	end
 	 
 	officerRay.SignalGameOver = onGameOver
-	Runtime:addEventListener( "SignalGameOver", officerRay )
+	Runtime:addEventListener( "SignalGameOver", rayOnGameOver )
 	
 	return officerRay;
 end

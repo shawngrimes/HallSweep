@@ -3,7 +3,7 @@ module(..., package.seeall)
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
-
+local isGameOver=false  
 
 ----------------------------------------------------------------------------------
 -- 
@@ -80,17 +80,25 @@ function scene:createScene( event )
 		
 		local Bully=require("Bully")
 		group:insert(Bully.new())
+        
+        local Imbriale=require("Imbriale")
+    	group:insert(Imbriale.new())
 		
 		local OfficerRay=require("OfficerRay")
 		group:insert(OfficerRay.new())
 		
 		local Spitball=require("Spitball")
 		group:insert(Spitball.new())
+        
+        local FlyingBook=require("FlyingBook")
+    	group:insert(FlyingBook.new())
 		
 		local HallPasses=require("HallPasses")
 		group:insert(HallPasses.new())
 		
 		local Coins=require("Coins")
+        local coinGroup=display.newGroup()
+        group:insert(coinGroup);
         --group:insert(Coins.new())
         --local returnedCoins=Coins.newThreeInAColumn()
         
@@ -98,16 +106,18 @@ function scene:createScene( event )
         local coinTimer1
         local coinTimer2
         local function generateCoins()
-            local returnedCoins=Coins.newMattCoins()
-            for i = 1, #returnedCoins do
-                print("Returned: ",tostring(returnedCoins))
-                group:insert(returnedCoins[i])
+            if(isGameOver==false) then
+                local returnedCoins=Coins.newMattCoins()
+                for i = 1, #returnedCoins do
+                    print("Returned: ",tostring(returnedCoins))
+                    coinGroup:insert(returnedCoins[i])
+                end
+                coinTimer1=timer.performWithDelay(math.random(1000,5000),randomCoins,1)
             end
-            coinTimer1=timer.performWithDelay(math.random(1000,5000),randomCoins,1)
         end
         
          function randomCoins()
-        	local randomStartTime=math.random(1000,30000)
+        	local randomStartTime=math.random(3000,30000)
             --local randomStartTime=math.random(1000,3000)
     		coinTimer2=timer.performWithDelay(randomStartTime,generateCoins,1)
     	end
@@ -124,20 +134,25 @@ function scene:createScene( event )
         local hallPassImage=display.newImageRect("images/object-pass-iPad.png",102,64)
         group:insert(hallPassLabel)
         group:insert(hallPassImage)
-        hallPassImage.x=738
-        hallPassImage.y=680
+        hallPassLabel:scale(.6,.6)
+        hallPassImage:scale(.6,.6)
+        hallPassImage.x=850
+        hallPassImage.y=display.contentHeight - hallPassImage.contentHeight * .75
         hallPassLabel.x=hallPassImage.x + hallPassImage.contentWidth * 1
     	hallPassLabel.y=hallPassImage.y
         
         local coinlabel=display.newText("x0",0,0, native.systemFontBold,72)
-        local coinImage=display.newImageRect("images/object-coin-iPad.png", 54, 53 )
+        local coinImage=display.newImageRect("images/object-coin-iPad.png", 54, 64 )
         group:insert(coinlabel)
         group:insert(coinImage)
+        coinlabel:scale(.6,.6)
+        coinImage:scale(.6,.6)
 		
-        coinImage.x=hallPassImage.x
+        coinImage.x=600
+        coinImage.y=hallPassImage.y
         coinlabel.x=coinImage.contentBounds.xMax + coinlabel.contentWidth * .5
-		coinlabel.y=hallPassLabel.y - coinlabel.contentHeight
-        coinImage.y=coinlabel.y
+		coinlabel.y=coinImage.y
+        
         
         local function updateCoins()
             --coinImage.x=coinlabel.x + coinlabel.contentWidth * .7
@@ -150,23 +165,45 @@ function scene:createScene( event )
 		
 		group:insert(letterboxBorder({r=0,g=0,b=0}))
 		
+
+        
+              
 		print("Create Scene: Num Objects in Group: "..tostring(group.numChildren))
-	    local onGameOver=function()
-    	    Runtime:removeEventListener("enterFrame",updateCoins)
-		    local changeScene=function()
-		    	storyboard.gotoScene("GameOverScene","fade",1000)
-		    end
+        local function onGameOver(event)
+	    --onGameOver=function(event)
+            Runtime:removeEventListener("SignalGameOver", onGameOver)
+            Runtime:removeEventListener("enterFrame",updateCoins)
             if(coinTimer1~=nil) then
-		        timer.cancel(coinTimer1)
+    	        timer.cancel(coinTimer1)
             end
             if(coinTimer2~=nil) then
                 timer.cancel(coinTimer2)
             end
-		    timer.performWithDelay(2000,changeScene)
 
+    	    if(isGameOver==false) then
+                isGameOver=true
+                print("Sending Coins: ",tostring(Patriot.getCoinCount()))
+    		    local changeScene=function()
+                    local options={
+                        effect="fade",
+                        time=1000,
+                        params={
+                            coinsCollected=Patriot.getCoinCount(),
+                            distanceTraveled=Patriot.getDistance(),
+                        }
+                    }
+    		    	storyboard.gotoScene("GameOverScene",options)
+    		    end
+                local gameOverImage=display.newImageRect("images/gameover-iPad.png",358,236)
+                group:insert(gameOverImage)
+                gameOverImage.x=display.contentCenterX
+                gameOverImage.y=display.contentCenterY
+                timer.performWithDelay(2500,changeScene)
+            end		
 		end
+        
+        
 		Runtime:addEventListener( "SignalGameOver", onGameOver )
-		
 end
 
 
@@ -194,10 +231,12 @@ function scene:enterScene( event )
 		announcementMusicObject = audio.loadStream("HallSweepAnnouncement.mp3")
 		audio.play(announcementMusicObject)
 		
-		local getToClassLabel=display.newText("You Better Hurry To Class!", 0,0, native.systemFontBold,48)
+		--local getToClassLabel=display.newText("You Better Hurry To Class!", 0,0, native.systemFontBold,48)
+        local getToClassLabel=display.newImageRect("images/starting-text-iPad.png",674,42)
 		group:insert(getToClassLabel)
 		getToClassLabel.x=display.contentWidth/2
-		getToClassLabel:setTextColor(0,0,255)
+        getToClassLabel.y=getToClassLabel.contentHeight
+		--getToClassLabel:setTextColor(0,0,255)
 
 	    local function removeGetToClassLabel(event)
 	        getToClassLabel:removeSelf()
@@ -226,8 +265,6 @@ end
 -- Called AFTER scene has finished moving offscreen:
 function scene:didExitScene( event )
         local group = self.view
-        
-        storyboard.removeScene( "GameScene" )
         -----------------------------------------------------------------------------
 
         --      This event requires build 2012.782 or later.
@@ -244,7 +281,7 @@ function scene:destroyScene( event )
         --      INSERT code here (e.g. remove listeners, widgets, save state, etc.)
 
         -----------------------------------------------------------------------------
-
+        print("destroying game scene")
 end
 
 
