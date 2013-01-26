@@ -58,7 +58,7 @@ function scene:createScene( event )
 	id="twitterButton", 
 	default="images/btn-twitter-up-iPad.png", 
 	over="images/btn-twitter-down-iPad.png", 
-	onEvent= twitterButtonEvent 
+	onEvent= myButtonEvent 
 	}
 group:insert(twitterButton)
 twitterButton.x=display.contentWidth/1.3
@@ -68,7 +68,7 @@ twitterButton.y=display.contentHeight/2 - twitterButton.contentHeight/2
 	id="facebookButton",
 	default="images/btn-facebook-up-iPad.png",
 	over="images/btn-facebook-down-iPad.png",
-	onEvent= facebookButtonEvent
+	onEvent= myButtonEvent
 	} 
 group:insert(facebookButton)
 facebookButton.x=display.contentWidth/1.3
@@ -78,7 +78,7 @@ facebookButton.y=display.contentHeight/1.6 - facebookButton.contentHeight/2
 	id="websiteButton",
 	default="images/btn-website-up-iPad.png",
 	over="images/btn-website-down-iPad.png",
-	onEvent= websiteButtonEvent
+	onEvent= myButtonEvent
 	} 
 group:insert(websiteButton)
 websiteButton.x=display.contentWidth/1.3

@@ -25,6 +25,7 @@ local leaderboardID="12HLXkc2O1";
 function scene:createScene( event )
         local group = self.view
         
+        math.randomseed(os.time() )
 		
 		--Show physics drawing lines, for help with debugging
 		--physics.setDrawMode( "hybrid" )
@@ -232,6 +233,7 @@ function scene:createScene( event )
         
         
 		Runtime:addEventListener( "SignalGameOver", onGameOver )
+        print("Scene Created")
 end
 
 
@@ -249,14 +251,15 @@ function scene:willEnterScene( event )
 		if(gameBackgroundMusicChannel~=nil) then
 			audio.stop(gameBackgroundMusicChannel)
 		end
-		backgroundMusicChannel=audio.play(gameBackgroundMusicObject, {loops=-1})
+		gameBackgroundMusicChannel=audio.play(gameBackgroundMusicObject, {loops=-1})
 end
 
 
 -- Called immediately after scene has moved onscreen:
 function scene:enterScene( event )
         local group = self.view
-		announcementMusicObject = audio.loadStream("HallSweepAnnouncement.mp3")
+        
+        print("Entering GameScene")
 		audio.play(announcementMusicObject)
 		
 		--local getToClassLabel=display.newText("You Better Hurry To Class!", 0,0, native.systemFontBold,48)
@@ -271,7 +274,9 @@ function scene:enterScene( event )
 	    end
 	
 	    timer.performWithDelay(2000, removeGetToClassLabel);
- 
+        print("GameScene Entered")
+        
+        
 
         -----------------------------------------------------------------------------
 

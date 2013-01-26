@@ -3,6 +3,7 @@ module(..., package.seeall)
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local FontNameToUse="DefaultFont"
+local playerScore;
 
 
 ----------------------------------------------------------------------------------
@@ -23,7 +24,7 @@ local FontNameToUse="DefaultFont"
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-        local playerScore=event.params.playerScore;
+        playerScore=event.params.playerScore;
         -----------------------------------------------------------------------------
 
         --      CREATE display objects and add them to 'group' here.
@@ -249,6 +250,32 @@ myImagePatriot.y=display.contentHeight
 	        end
 		end
         myImagePatriot:toFront()
+        
+        
+        local function onComplete( event )
+    	    if "clicked" == event.action then
+    	        local i = event.index
+    	        if 1 == i then
+    	        	--print("ONE")
+    	        	
+        		    -- Do nothing; dialog will simply dismiss
+    	        elseif 2 == i then
+    	        	----print("TWO")
+                    if(not highScores:isLoggedIn()) then
+    					highScores:showLogin();
+    				else
+    					local alert=native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+    				end
+    			end
+    	    end
+    	end
+    		
+    	if(not highScores:isLoggedIn()) then
+    		-- Show alert with two buttons
+    	    local alert=native.showAlert( "Submit High Score?", "Would you like to submit your high score?", { "No Thanks","OK" }, onComplete ) 		
+            --group:insert(alert)
+     	end
+        
 end
 
 
@@ -342,7 +369,11 @@ function scene:overlayEnded( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
-
+    if(highScores:isLoggedIn()) then
+        local yourScore=tostring(playerScore)
+		highScores:submitHighScore(LEADERBOARD_IDS["standardMode"], yourScore)
+		local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+	end
 end
 
 ---------------------------------------------------------------------------------

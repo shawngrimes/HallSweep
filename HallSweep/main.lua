@@ -76,6 +76,8 @@ gameBackgroundMusicObject = audio.loadStream("GameBackgroundMusic.mp3")
 gameBackgroundMusicChannel=audio.play(gameBackgroundMusicObject, {loops=-1})
 audio.stop(gameBackgroundMusicChannel)
 
+announcementMusicObject = audio.loadSound("HallSweepAnnouncement.mp3")
+
 physics = require "physics"
 scaleFactor = 1.0
 physicsData = (require "PatriotPhysics").physicsData(scaleFactor)

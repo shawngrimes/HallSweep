@@ -20,7 +20,7 @@ function MyCharacter.new()
 	hallpass.isSensor=true
     
     local function onCollision( self, event )
-        print("hallpass Collision With: ", event.other.myName)
+        --print("hallpass Collision With: ", event.other.myName)
         if ( event.phase == "began" and event.other.myName=="patriotHero") then
             hallpass.isVisible=false
         end

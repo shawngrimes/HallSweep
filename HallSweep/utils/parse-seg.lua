@@ -249,7 +249,6 @@ end
 function parse:isLoggedIn()
 	local token=parse:getSessionToken()
 	if(token~=nil) then
-        USER_OBJECT_ID=nil
 		if(token~="" and USER_OBJECT_ID~=nil) then
 			return true
 		else

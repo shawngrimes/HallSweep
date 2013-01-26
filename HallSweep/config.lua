@@ -14,19 +14,4 @@ application = {
 		}
 		--]]
 	},
-
-    --[[
-    -- Push notifications
-
-    notification =
-    {
-        iphone =
-        {
-            types =
-            {
-                "badge", "sound", "alert", "newsstand"
-            }
-        }
-    }
-    --]]    
 }

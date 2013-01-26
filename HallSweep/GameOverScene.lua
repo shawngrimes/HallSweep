@@ -2,11 +2,13 @@ module(..., package.seeall)
 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
+
 local coinsCollectedLabel
 local isOverlayShowing=false;
 
 local coinsCollected
 local distanceTraveled
+local alert
 ----------------------------------------------------------------------------------
 -- 
 --      NOTE:
@@ -123,7 +125,33 @@ mybutton3.y=display.contentHeight - mybutton3.contentHeight
     scoreLabel.y=distanceTraveledLabel.y
     scoreLabel:setTextColor(0,0,0);
     group:insert(scoreLabel);    
-
+    
+     local function onComplete( event )
+     	userBox.promptToSubmitScore=false
+ 		userBox:save()
+	    if "clicked" == event.action then
+	        local i = event.index
+	        if 1 == i then
+	        	--print("ONE")
+	        	
+    		    -- Do nothing; dialog will simply dismiss
+	        elseif 2 == i then
+	        	----print("TWO")
+                if(not highScores:isLoggedIn()) then
+					highScores:showLogin();
+				else
+					alert=native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+				end
+			end
+	    end
+	end
+		
+	if(userBox.promptToSubmitScore) then
+		-- Show alert with two buttons
+	    alert=native.showAlert( "Submit High Score?", "Would you like to submit your high score?", { "No Thanks","OK" }, onComplete ) 		
+        --group:insert(alert)
+ 	end
+    
 end
 
 
@@ -151,29 +179,10 @@ function scene:enterScene( event )
 
         -----------------------------------------------------------------------------
         storyboard.removeScene( "GameScene" )
-        local function onComplete( event )
-         		userBox.promptToSubmitScore=false
-     			userBox:save()
-			    if "clicked" == event.action then
-			        local i = event.index
-			        if 1 == i then
-			        	--print("ONE")
-			        	if(not highScores:isLoggedIn()) then
-							highScores:showLogin();
-						else
-							local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
-						end
-            		    -- Do nothing; dialog will simply dismiss
-			        elseif 2 == i then
-			        	----print("TWO")
-        			end
-			    end
-			end
-			
-			if(userBox.promptToSubmitScore) then
-				-- Show alert with two buttons
-				local alert = native.showAlert( "Submit High Score?", "Would you like to submit your high score?", { "OK", "No Thanks" }, onComplete ) 		
-     		end
+        
+        
+       
+            
 end
 
 
@@ -186,7 +195,10 @@ function scene:exitScene( event )
         --      INSERT code here (e.g. stop timers, remove listeners, unload sounds, etc.)
 
         -----------------------------------------------------------------------------
-
+        alert=nil;
+        print("Removing Game Over Scene")
+        storyboard.removeScene( "GameOverScene" )
+        print("Game Over Scene Removed")
 end
 
 
@@ -200,7 +212,7 @@ function scene:didExitScene( event )
         -----------------------------------------------------------------------------
         --coinsCollectedLabel:removeSelf()
         --coinsCollectedLabel=nil
-        storyboard.removeScene( "GameOverScene" )
+        
 end
 
 
@@ -240,14 +252,15 @@ function scene:overlayEnded( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
+        
     if(highScores:isLoggedIn()) then
-    		--print("UserScore: "..tostring(userScore))
-			--print("Leaderboard: "..tostring(LEADERBOARD_IDS[gameType]))
-            local yourScore=tostring(math.floor(distanceTraveled/30) + math.floor(.5 * coinsCollected))
-			highScores:submitHighScore(LEADERBOARD_IDS["standardMode"], yourScore)
-			local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
-		end
-		isOverlayShowing=false;
+		--print("UserScore: "..tostring(userScore))
+		--print("Leaderboard: "..tostring(LEADERBOARD_IDS[gameType]))
+        local yourScore=tostring(math.floor(distanceTraveled/30) + math.floor(.5 * coinsCollected))
+		highScores:submitHighScore(LEADERBOARD_IDS["standardMode"], yourScore)
+		local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+	end
+	isOverlayShowing=false;
 end
 
 ---------------------------------------------------------------------------------

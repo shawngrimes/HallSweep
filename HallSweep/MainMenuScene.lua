@@ -36,16 +36,12 @@ function scene:createScene( event )
 	mybackground.y=display.contentCenterY
 	group:insert(mybackground)
     
-    local patriot=display.newImageRect("images/patriot-mainScreen-iPad.png",539,451)
-    local patriotFog=display.newImageRect("images/fog-mainScreen-iPad.png",156,190)
-    group:insert(patriotFog)
+    local patriot=display.newImageRect("images/title-patriot-iPad.png",355,423)
     group:insert(patriot)
     patriot:scale(.75,.75)
-    patriotFog:scale(.75,.75)
-    patriot.x=display.contentCenterX + patriot.contentWidth * .3
+    
+    patriot.x=display.contentCenterX 
     patriot.y=display.contentCenterY + patriot.contentHeight * .2
-    patriotFog.x=patriot.x-patriotFog.contentWidth *2
-    patriotFog.y=patriot.y + patriotFog.contentHeight * .65
     
 		
 local widget = require "widget"
