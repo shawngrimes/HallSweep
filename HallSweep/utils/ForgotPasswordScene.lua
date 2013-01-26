@@ -38,7 +38,7 @@ function scene:createScene( event )
    background:setStrokeColor(255,255,255);
    background.alpha=0.5
    
-   backgroundImage=display.newImage(Utils.getImageNameWithSuffix("container-login.png"))
+   backgroundImage=display.newImageRect("images/login-iPad.png",622,652)
    backgroundImage.x=Utils.screenWidth * .5
    backgroundImage.y=Utils.screenHeight * .5
    group:insert(backgroundImage)
@@ -89,24 +89,11 @@ function scene:enterScene( event )
 		
 	local widget = require "widget";
 		
-	if(Utils.isIPadRetina()) then
-    	textFieldFont = native.newFont( "HVD Comic Serif Pro", 24 )
-    elseif(Utils.isIPad()) then
-		textFieldFont = native.newFont( "HVD Comic Serif Pro", 16 )
-	elseif(Utils.isIPhoneRetina()) then
-		if(Utils.isTall) then
-			textFieldFont = native.newFont( "HVD Comic Serif Pro", 14 )
-		else
-			textFieldFont = native.newFont( "HVD Comic Serif Pro", 12 )
-		end
-	elseif(Utils.isIPhone()) then
-		textFieldFont = native.newFont( "HVD Comic Serif Pro", 12 )
-	end
-
+    textFieldFont = native.newFont( "HVD Comic Serif Pro", 16/display.contentScaleY )
 
 	usernameField=native.newTextField(10,30,Utils.screenWidth * .5,Utils.screenHeight * .05);
 	usernameField.x=display.contentCenterX
-	usernameField.y=backgroundImage.contentBounds.yMin + usernameField.contentHeight + usernameField.contentHeight
+	usernameField.y=backgroundImage.contentBounds.yMin + usernameField.contentHeight * 3
 	usernameField.font=textFieldFont
 	usernameField.text = "Email..."
 	usernameField:setTextColor( 198,198,198, 255 )
@@ -129,8 +116,8 @@ function scene:enterScene( event )
 	
 	local cancelButton=widget.newButton{
 		id="cancelButton",
-		default=Utils.getImageNameWithSuffix("btn-cancel-up.png"),
-		over=Utils.getImageNameWithSuffix("btn-cancel-down.png"),
+		default="images/btn-cancel-up-iPad.png",
+		over="images/btn-cancel-down-iPad.png",
 		onEvent = onButtonEvent
 	}
 	cancelButton.x=backgroundImage.contentBounds.xMax - cancelButton.contentWidth * .25
@@ -139,8 +126,8 @@ function scene:enterScene( event )
 	
 	local logInButton = widget.newButton{
 	    id = "logInButton",		
-	    default=Utils.getImageNameWithSuffix("btn-submit-login-up.png"),
-		over=Utils.getImageNameWithSuffix("btn-submit-login-down.png"),	
+	    default="images/btn-submit-login-up-iPad.png",
+		over="images/btn-submit-login-down-iPad.png",	
 		onEvent = onButtonEvent
 	}
 	logInButton.x=Utils.screenWidth * .5

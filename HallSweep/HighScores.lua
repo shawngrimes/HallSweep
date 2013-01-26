@@ -2,7 +2,7 @@ module(..., package.seeall)
 
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
-
+local FontNameToUse="DefaultFont"
 
 
 ----------------------------------------------------------------------------------
@@ -23,7 +23,7 @@ local scene = storyboard.newScene()
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-
+        local playerScore=event.params.playerScore;
         -----------------------------------------------------------------------------
 
         --      CREATE display objects and add them to 'group' here.
@@ -77,8 +77,8 @@ local mainMenuButton=widget.newButton{
   onEvent = onButtonEvent
 }
 		group:insert(mainMenuButton)
-mainMenuButton.x = display.contentCenterX
-mainMenuButton.y = playAgainButton.y - playAgainButton.contentHeight
+mainMenuButton.x = mainMenuButton.contentWidth * .7 --display.contentCenterX
+mainMenuButton.y = mainMenuButton.contentHeight
 
 local nameTitle1=display.newText("Initials",0,0,native.systemFontBold,72)
 		group:insert(nameTitle1)
@@ -121,7 +121,134 @@ myImagePatriot.y=display.contentHeight
 --This will add a buffer of half the object's height, if you want it flush
 --bottom, change it to myObject.y=display.contentHeight
 
+    local containerGroup=display.newGroup();
+    group:insert(containerGroup)
+
+
+    local fontScale=.5
+    local yourScoreText=TextCandy.CreateText({
+		fontName= FontNameToUse,
+		text="YOU",
+		originX = "CENTER",
+		originY= "CENTER",
+		showOrigin=false
+	});	
+	yourScoreText:setColor(178, 19, 24)
+	yourScoreText:scale(fontScale,fontScale)
+	yourScoreText.y=260
+	yourScoreText.x=300
+	containerGroup:insert(yourScoreText);
+	
+	local yourScoreValueText=TextCandy.CreateText({
+		fontName= FontNameToUse,
+		text= tostring(playerScore),
+		originX = "CENTER",
+		originY= "CENTER",
+		showOrigin=false
+	});	
+	yourScoreValueText:setColor(178, 19, 24)
+	yourScoreValueText:scale(fontScale,fontScale)
+	yourScoreValueText.x=710
+	yourScoreValueText.y=yourScoreText.y
+	containerGroup:insert(yourScoreValueText);
+    
+    local scrollView = widget.newScrollView{
+	    width = 850,
+	    height = 320,
+	    scrollWidth = 850,
+	    scrollHeight = 768,--yourScoreText.contentHeight * 10,
+	    hideBackground=true,
+	    --maskFile="images/iOS/scrollViewMask-iPad@2x.png",
+	    --maskFile="mask-320x320.png",
+	    --listener = scrollViewListener
+	}
+	scrollView.x=100
+	scrollView.y=280
+	scrollView.maskX=0
+	scrollView.maskY=0
+	containerGroup:insert(scrollView);
+    
+    local scoresContainerGroup = display.newGroup()
+    containerGroup:insert(scoresContainerGroup)
+    local mask = graphics.newMask( "images/scoresMask.png" )
+    scoresContainerGroup:insert(scrollView);
 		
+    scoresContainerGroup:setMask( mask )
+    scoresContainerGroup:setReferencePoint( display.CenterReferencePoint )
+    
+    scoresContainerGroup.maskY=display.contentCenterY
+    scoresContainerGroup.maskX=display.contentCenterX
+    local leaderBoardID="12HLXkc2O1"
+    local highestScoreValueContentWidth=0;
+    	if(userBox.leaderboards[leaderBoardID]~=nil) then
+	        for i=1,# userBox.leaderboards[leaderBoardID] do
+	        	local score=userBox.leaderboards[leaderBoardID][i]
+				--		textFieldFont = native.newFont( "HVD Comic Serif Pro", 24 )
+				local userScoreText = display.newText("here",0,0,"HVD Comic Serif Pro", 64)
+				userScoreText:setTextColor(85,85,85)
+				userScoreText:scale(fontScale,fontScale)
+				
+				local stringMax=30
+				if(Utils.isIPadRetina()) then
+					stringMax=40
+				elseif(Utils.isIPad()) then
+					stringMax=27
+				elseif(Utils.isIPhoneRetina()) then
+					stringMax=21
+				elseif(Utils.isIPhone()) then
+					stringMax=20
+				end
+				
+				
+				if(score["user"]~=nil) then
+					--userScoreText.text="Too Long To Show"
+					--userScoreText.text=tostring(i)..". ".. "Too Long To Show"
+					if(string.len(tostring(i)..". "..score["user"])>stringMax) then
+						userScoreText.text=string.sub(tostring(i)..". "..score["user"],1,stringMax).."…"
+					else
+						userScoreText.text=(tostring(i)..". "..score["user"])	
+					end
+					--userScoreText.text=(tostring(i)..". "..score["user"])
+				else
+					userScoreText.text=tostring(i)..". --"
+				end
+				
+				local buffer=25
+				userScoreText:setReferencePoint(display.CenterLeftReferencePoint)
+				userScoreText.y=i * userScoreText.contentHeight * .5 + (i-1) * userScoreText.contentHeight * .5 + userScoreText.contentHeight * .5
+				userScoreText.x=buffer
+				scrollView:insert(userScoreText);
+				
+				local scoreText = display.newText("5",0,0,"HVD Comic Serif Pro", 64)
+				scoreText:setTextColor(85,85,85)
+				scoreText:scale(fontScale,fontScale)
+				scoreText.text=tostring(score["score"]);
+				if(i==1) then
+					highestScoreValueContentWidth=scoreText.contentWidth
+				end
+				
+
+				local boundsX,boundsY=scrollView:contentToLocal(scrollView.contentBounds.xMax, 50 )
+				--scoreText.x=boundsX - highestScoreValueContentWidth 
+				local buffer=25
+				scoreText.x=610
+				scoreText.y=userScoreText.y
+				scrollView:insert(scoreText);
+				--scoreText.width=highestScoreValueContentWidth
+								
+	        	if(tonumber(score["score"])<tonumber(playerScore)) then
+	        		--this is a high score
+	        		isHighScore=true
+	        	end
+                --print("Adding Score:")
+	        	if(score["user"]~=nil) then
+		        	--print("Username: "..score["user"].."    Score:"..score["score"])
+		        else
+			        --print("Username: ''    Score:"..score["score"])
+		        end
+	        end
+		end
+        myImagePatriot:toFront()
 end
 
 
@@ -150,7 +277,6 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
 
         -----------------------------------------------------------------------------
-
 end
 
 
@@ -175,7 +301,8 @@ function scene:didExitScene( event )
         --      This event requires build 2012.782 or later.
 
         -----------------------------------------------------------------------------
-
+     storyboard.removeScene( "HighScores" )
+     highScores:getHighScores();
 end
 
 

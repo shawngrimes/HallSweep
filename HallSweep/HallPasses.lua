@@ -1,5 +1,7 @@
 module(..., package.seeall)
 
+local bezier=require('bezier')
+
 local MyCharacter={}
 
 
@@ -33,45 +35,52 @@ function MyCharacter.new()
 --path[1].x=display.contentWidth
 --path[1].y=display.contentHeight * .5
 
---Second Stop on Path
-path[1]={}
-path[1].x=display.contentWidth * .5
-path[1].y=0
-
---Third Stop on Path
-path[2]={}
-path[2].x=-hallpass.contentWidth
-path[2].y=display.contentHeight * .5
+local curve = bezier:curve({display.contentWidth, 
+                            display.contentWidth,
+                            display.contentWidth/2,
+                            display.contentWidth/4,
+                            -hallpass.contentWidth}, 
+                            {display.contentHeight, 
+                                0,
+                                0, 
+                                display.contentHeight,
+                                0})
  
-local animate
-local posCount = 1
---moving the object variable named "ball" -- this is where animation takes place
-local function moveObject(event)
-	print("PosCount: ",posCount)
-	print("Path #: ",#path)
-     if posCount <= #path then
-     	transition.to(hallpass,{ time=1500,x=path[posCount].x,y=path[posCount].y})
---        hallpass.x = path[posCount].x
---        hallpass.y = path[posCount].y
-        posCount = posCount + 1
-     else
-         timer.cancel(animate)
-     end
-end
- 
--- to move ball when we click the animate text
-local function move()
-	posCount = 1
-	animate = timer.performWithDelay( 3000, moveObject, #path )
-end
-	
-	local function removeObject(object)
-		hallpass:removeSelf()
-		hallpass=nil;
-	end
-	
-	
-	move()
+    print('curve is a ' .. type(curve))
+     
+    -- see the terminal for the output of the function
+    local function removeObject(object)
+    	hallpass:removeSelf()
+    	hallpass=nil;
+    end
+    
+    local posCount = 0.01
+    --NewX:     -73.593524160001
+    --NewY: 	57.826959359998
+    local yOffset=math.random( -(57 + hallpass.contentHeight * 2),(display.contentHeight - hallpass.contentHeight - 57)/2)
+    --moving the object variable named "ball" -- this is where animation takes place
+    local function moveObject(event)
+        if posCount <= 1 then
+            local newX,newY=curve(posCount)
+            newY=newY + yOffset
+            hallpass.x=newX
+            hallpass.y=newY
+            --[[
+            local newCircle=display.newCircle( newX, newY, 5 )
+            newCircle:setFillColor(255,0,0)
+            ]]
+            posCount=posCount + 0.01
+            
+         else
+             Runtime:removeEventListener("enterFrame",moveObject);
+             removeObject(hallPass);
+         end
+    end
+    local function startMoving()
+        Runtime:addEventListener("enterFrame",moveObject);
+    end
+    timer.performWithDelay(1500,startMoving)
+    
 
 
 	return hallpass

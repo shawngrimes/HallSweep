@@ -3,8 +3,10 @@ module(..., package.seeall)
 local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 local coinsCollectedLabel
+local isOverlayShowing=false;
 
-
+local coinsCollected
+local distanceTraveled
 ----------------------------------------------------------------------------------
 -- 
 --      NOTE:
@@ -23,18 +25,10 @@ local coinsCollectedLabel
 -- Called when the scene's view does not exist:
 function scene:createScene( event )
         local group = self.view
-print("-------------EVENT------------");
-for k,v in pairs(event) do 
-    print(k,v) 
-    if(type(v) == "table") then
-        for l,m in pairs(v) do
-            print("    ",l,m)
-        end
-    end
-end
-print("-------------EVENT------------");
-
+    
     local params=event.params
+    coinsCollected=params.coinsCollected
+    distanceTraveled=tostring(math.floor(params.distanceTraveled/30))
 
 -- Alison McGuire Hall Sweep Project
 local brickWall = display.newImageRect("images/summary-iPad.png",1024,768)
@@ -50,7 +44,15 @@ local myButtonEvent = function (event)
 	if event.phase == "release" then
 		print ("You pressed and released the "..event.target.id.."button!")
 		if(event.target.id == "highscoreButton") then
-			storyboard.gotoScene("HighScores","flip",500)
+            local options={
+                effect="fade",
+                time=1000,
+                params={
+                    playerScore=tostring(tonumber(distanceTraveled) + math.floor(.5 * coinsCollected)),
+                }
+            }
+            print("Sending Player Score: ", options.params.playerScore)
+			storyboard.gotoScene("HighScores",options)
 		elseif(event.target.id == "mainMenuButton") then
 			storyboard.gotoScene("MainMenuScene","flip",500)
 		elseif(event.target.id == "playAgain") then
@@ -103,9 +105,11 @@ group:insert(mybutton3)
 mybutton3.x=display.contentCenterX
 mybutton3.y=display.contentHeight - mybutton3.contentHeight
 
+    
     coinsCollectedLabel=display.newText(tostring(params.coinsCollected),460,460,native.systemFontBold,72)
     coinsCollectedLabel:setTextColor(0,0,0);
     group:insert(coinsCollectedLabel);    
+    
     
     local distanceString=string.format("%s feet", tostring(math.floor(params.distanceTraveled/30)));
     local distanceTraveledLabel=display.newText(distanceString,580,280,native.systemFontBold,30)
@@ -147,6 +151,29 @@ function scene:enterScene( event )
 
         -----------------------------------------------------------------------------
         storyboard.removeScene( "GameScene" )
+        local function onComplete( event )
+         		userBox.promptToSubmitScore=false
+     			userBox:save()
+			    if "clicked" == event.action then
+			        local i = event.index
+			        if 1 == i then
+			        	--print("ONE")
+			        	if(not highScores:isLoggedIn()) then
+							highScores:showLogin();
+						else
+							local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+						end
+            		    -- Do nothing; dialog will simply dismiss
+			        elseif 2 == i then
+			        	----print("TWO")
+        			end
+			    end
+			end
+			
+			if(userBox.promptToSubmitScore) then
+				-- Show alert with two buttons
+				local alert = native.showAlert( "Submit High Score?", "Would you like to submit your high score?", { "OK", "No Thanks" }, onComplete ) 		
+     		end
 end
 
 
@@ -199,7 +226,7 @@ function scene:overlayBegan( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
-
+        isOverlayShowing=true;
 end
 
 
@@ -213,7 +240,14 @@ function scene:overlayEnded( event )
         --      This event requires build 2012.797 or later.
 
         -----------------------------------------------------------------------------
-
+    if(highScores:isLoggedIn()) then
+    		--print("UserScore: "..tostring(userScore))
+			--print("Leaderboard: "..tostring(LEADERBOARD_IDS[gameType]))
+            local yourScore=tostring(math.floor(distanceTraveled/30) + math.floor(.5 * coinsCollected))
+			highScores:submitHighScore(LEADERBOARD_IDS["standardMode"], yourScore)
+			local alert = native.showAlert( "High Score", "Your score has been sent.", { "OK"} )
+		end
+		isOverlayShowing=false;
 end
 
 ---------------------------------------------------------------------------------

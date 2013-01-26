@@ -249,7 +249,8 @@ end
 function parse:isLoggedIn()
 	local token=parse:getSessionToken()
 	if(token~=nil) then
-		if(token~="") then
+        USER_OBJECT_ID=nil
+		if(token~="" and USER_OBJECT_ID~=nil) then
 			return true
 		else
 			return false
@@ -270,7 +271,7 @@ function parse:setAuthToken(authToken)
 end
 
 function parse:submitHighScore(leaderboard, score)
-	local params = '{"score":'..score..',"leaderboard":{"__op":"AddRelation","objects":[{"__type":"Pointer","className":"Leaderboards","objectId":"'..leaderboard..'"}]},"user":{"__type":"Pointer","className":"_User","objectId":"'..USER_OBJECT_ID..'"}}';
+	local params = '{"score":'..score..',"leaderboardId":{"__type":"Pointer","className":"Leaderboards","objectId":"'..leaderboard..'"},"user":{"__type":"Pointer","className":"_User","objectId":"'..USER_OBJECT_ID..'"}}';
 	local path = "classes/Scores/"
 
 	-- set currentUser when it gets it
@@ -308,8 +309,8 @@ function parse:submitHighScore(leaderboard, score)
 end
 
 function parse:getLeaderboardScores(leaderboard)
-	local params = url.escape('where={"leaderboard":{"__type":"Pointer","className":"leaderBoards","objectId":"'..leaderboard..'"}}')
-	params=params.."&order=-score&limit=10&include=user";
+	local params = url.escape('where={"leaderboardId":{"__type":"Pointer","className":"Leaderboards","objectId":"'..leaderboard..'"}}')
+    params=params.."&order=-score&limit=50&include=user";
 
 	local path = "classes/Scores"
 

@@ -4,8 +4,8 @@ local M={};
 local GM_ACCESS_KEY = "776332ac1fa9032207d527ee4d0341217cd5900d"
 local GM_SECRET_KEY = "311823259a9f4533d6fee5a85879e7c267191844"
 
-local PARSE_APP_ID="oCPjLQt6Hlla0udh1grGkrz50BoCxcU4t0KZN60N"
-local REST_KEY="PayDNmv4EV51ZjvOgAW3TXPbot4svteom4kI4Z0U"
+local PARSE_APP_ID="PLkNQ11j4r41ZnGFDLPVoEZXkBu3gXAqDsc94K8H"
+local REST_KEY="oahXImch24oRuRcWYO57vMaLB5Y7y4BqBZkxIPee"
 
 
 local storyboard = require( "storyboard" )

@@ -4,6 +4,7 @@ local storyboard = require( "storyboard" )
 local scene = storyboard.newScene()
 
 local isGameOver=false  
+local leaderboardID="12HLXkc2O1";
 
 ----------------------------------------------------------------------------------
 -- 
@@ -92,9 +93,11 @@ function scene:createScene( event )
         
         local FlyingBook=require("FlyingBook")
     	group:insert(FlyingBook.new())
-		
+        
+        local hallPassGroup=display.newGroup()
 		local HallPasses=require("HallPasses")
-		group:insert(HallPasses.new())
+        hallPassGroup:insert(HallPasses.new())
+		group:insert(hallPassGroup)
 		
 		local Coins=require("Coins")
         local coinGroup=display.newGroup()
@@ -107,9 +110,23 @@ function scene:createScene( event )
         local coinTimer2
         local function generateCoins()
             if(isGameOver==false) then
-                local returnedCoins=Coins.newMattCoins()
+                local randomCoinType=math.random(1,10)
+                local returnedCoins=nil;
+                if(randomCoinType==1) then
+                    returnedCoins=Coins.newMattCoins()
+                elseif(randomCoinType==2) then
+                    returnedCoins=Coins.newAliCoins()
+                elseif(randomCoinType<=4) then
+                    returnedCoins=Coins.newThreeInAColumn()
+                elseif(randomCoinType>4 and randomCoinType<7) then
+                    returnedCoins=Coins.newFifteenColumn()
+                elseif(randomCoinType>=7 and randomCoinType<10) then
+                    returnedCoins=Coins.newFiveInARow()
+                elseif(randomCoinType>=10) then
+                    returnedCoins=Coins.newTenColumn()
+                end
                 for i = 1, #returnedCoins do
-                    print("Returned: ",tostring(returnedCoins))
+--                    print("Returned: ",tostring(returnedCoins))
                     coinGroup:insert(returnedCoins[i])
                 end
                 coinTimer1=timer.performWithDelay(math.random(1000,5000),randomCoins,1)
@@ -117,7 +134,7 @@ function scene:createScene( event )
         end
         
          function randomCoins()
-        	local randomStartTime=math.random(3000,30000)
+        	local randomStartTime=math.random(3000,20000)
             --local randomStartTime=math.random(1000,3000)
     		coinTimer2=timer.performWithDelay(randomStartTime,generateCoins,1)
     	end
@@ -153,9 +170,15 @@ function scene:createScene( event )
         coinlabel.x=coinImage.contentBounds.xMax + coinlabel.contentWidth * .5
 		coinlabel.y=coinImage.y
         
-        
+        local lastCoinAmount=0
         local function updateCoins()
             --coinImage.x=coinlabel.x + coinlabel.contentWidth * .7
+            
+            if((Patriot.getCoinCount() % 50==0) and lastCoinAmount~=Patriot.getCoinCount() and Patriot.getHallPasses()<3) then
+                 --Generate Hall Pass
+                 hallPassGroup:insert(HallPasses.new())
+            end
+            lastCoinAmount=Patriot.getCoinCount()
             coinlabel.text=string.format("x%s", tostring(Patriot.getCoinCount()))
             coinlabel.x=coinImage.contentBounds.xMax + coinlabel.contentWidth * .5
             hallPassLabel.text=string.format("x%s", tostring(Patriot.getHallPasses()))
@@ -183,6 +206,11 @@ function scene:createScene( event )
     	    if(isGameOver==false) then
                 isGameOver=true
                 print("Sending Coins: ",tostring(Patriot.getCoinCount()))
+                if(highScores:isLoggedIn()) then
+            		local yourScore=tostring(math.floor(Patriot.getDistance()/30) + math.floor(.5 * Patriot.getCoinCount()))
+        			--print("Submitting Score: "..tostring(yourScore))
+        			highScores:submitHighScore(leaderboardID, yourScore)
+        		end
     		    local changeScene=function()
                     local options={
                         effect="fade",
@@ -221,7 +249,7 @@ function scene:willEnterScene( event )
 		if(gameBackgroundMusicChannel~=nil) then
 			audio.stop(gameBackgroundMusicChannel)
 		end
-		--backgroundMusicChannel=audio.play(titleBackgroundMusicObject, {loops=-1})
+		backgroundMusicChannel=audio.play(gameBackgroundMusicObject, {loops=-1})
 end
 
 

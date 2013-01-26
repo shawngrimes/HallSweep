@@ -31,7 +31,7 @@ function scene:createScene( event )
 
         -----------------------------------------------------------------------------
 
-	local mybackground = display.newImage("images/about-iPad.png")
+	local mybackground = display.newImageRect("images/about-iPad.png",1024,768)
 	mybackground:setReferencePoint(display.CenterReferencePoint)
 	mybackground.x=display.contentCenterX 
 	mybackground.y=display.contentCenterY

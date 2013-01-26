@@ -159,8 +159,11 @@ function BackgroundGenerator:generateBackground()
 				
 		scene3randomObjects=generateBackgroundScenery()
 		scene3:insert(scene3randomObjects)
-				
-				
+		
+        local scene1FG=display.newGroup()
+        local scene2FG=display.newGroup()
+        local scene3FG=display.newGroup()
+		
 		local bgSpeed = -2.5;
 		
 		local shouldRepeat=true;
@@ -174,11 +177,16 @@ function BackgroundGenerator:generateBackground()
 				local xOffset = ( 0.15 * tDelta )
 				
 				scene1.x=scene1.x - xOffset
+                scene1FG.x=scene1.x
+                
 				scene2.x=scene2.x - xOffset
+                scene2FG.x=scene2.x
+                
 				scene3.x=scene3.x - xOffset
+                scene3FG.x=scene3.x
 				
 				 if(scene2.contentBounds.xMin< 0)  and (scene3.contentBounds.xMin < display.contentWidth)  and (scene1.contentBounds.xMax < 0) then
-                    if(backgroundType==2) then
+                    if(backgroundType==3) then
                         print("Resetting scene1 to backgroundType=1")
                         backgroundType=1
                         scene1:removeSelf()
@@ -191,6 +199,9 @@ function BackgroundGenerator:generateBackground()
                         myBackground:setReferencePoint(display.TopLeftReferencePoint)
         	            myBackground.x=0
     		            myBackground.y=0
+                        
+                        scene1FG:removeSelf()
+                        scene1FG=display.newGroup()
                         
                     elseif(backgroundType==1) then
                         print("Resetting scene1 to backgroundType=2")
@@ -207,6 +218,37 @@ function BackgroundGenerator:generateBackground()
                         myBackground:setReferencePoint(display.TopLeftReferencePoint)
         	            myBackground.x=0
     		            myBackground.y=0
+                        
+                        scene1FG:removeSelf()
+                        scene1FG=display.newGroup()
+                        
+                    elseif(backgroundType==2) then
+                        print("Resetting scene1 to backgroundType=2")
+                        backgroundType=3
+                        scene1:removeSelf()
+                        scene1=display.newGroup()
+                        backgroundGroup:insert(scene1)
+                        scene1:toBack()
+                        
+                        myBackground=display.newImageRect("images/game-3-endleft-background-iPad.png",1024,768)
+                        scene1:insert(myBackground)
+                        
+                        myBackground:toBack()
+                        myBackground:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground.x=0
+    		            myBackground.y=0
+                        
+                        scene1FG:removeSelf()
+                        scene1FG=display.newGroup()
+                        scene1FG.x=display.contentWidth
+                        
+                        local scene1FGImage=display.newImageRect("images/game-3-center-foreground-iPad.png",1024,768)
+                        scene1FG:insert(scene1FGImage)
+                        scene1FGImage:setReferencePoint(display.TopLeftReferencePoint)
+                        scene1FGImage.x=0
+    		            scene1FGImage.y=0
+                        
+                        foregroundGroup:insert(scene1FG)
                         
 				 	end
                     --Uncomment for testing
@@ -244,6 +286,10 @@ function BackgroundGenerator:generateBackground()
                         myBackground2:setReferencePoint(display.TopLeftReferencePoint)
         	            myBackground2.x=0
     		            myBackground2.y=0
+                        
+                        scene2FG:removeSelf()
+                        scene2FG=display.newGroup()
+                        
                      elseif(backgroundType==2) then
         			 	scene2:removeSelf()
                         scene2=display.newGroup()
@@ -257,6 +303,32 @@ function BackgroundGenerator:generateBackground()
                         myBackground2:setReferencePoint(display.TopLeftReferencePoint)
         	            myBackground2.x=0
     		            myBackground2.y=0
+                    elseif(backgroundType==3) then
+            		 	scene2:removeSelf()
+                        scene2=display.newGroup()
+                        backgroundGroup:insert(scene2)
+                        scene2:toBack()
+                        
+                        myBackground2=display.newImageRect("images/game-3-center-scenery-iPad.png",1024,768)
+        	            scene2:insert(myBackground2)
+                        
+                        myBackground2:toBack()
+                        myBackground2:setReferencePoint(display.TopLeftReferencePoint)
+        	            myBackground2.x=0
+    		            myBackground2.y=0
+                        
+                        scene2FG:removeSelf()
+                        scene2FG=display.newGroup()
+                        scene2FG.x=display.contentWidth
+                        
+                        local scene2FGImage=display.newImageRect("images/game-3-center-foreground-iPad.png",1024,768)
+                        scene2FG:insert(scene2FGImage)
+                        scene2FGImage:setReferencePoint(display.TopLeftReferencePoint)
+                        scene2FGImage.x=0
+        	            scene2FGImage.y=0
+                        
+                        
+                        foregroundGroup:insert(scene2FG)
 				 	end
                      
                      --Uncomment for testing
@@ -295,6 +367,10 @@ function BackgroundGenerator:generateBackground()
                         myBackground3:setReferencePoint(display.TopLeftReferencePoint)
         	            myBackground3.x=0
     		            myBackground3.y=0
+                        
+                        scene3FG:removeSelf()
+                        scene3FG=display.newGroup()
+                        
                     elseif(backgroundType==2) then
             		 	scene3:removeSelf()
                         scene3=display.newGroup()
@@ -310,6 +386,32 @@ function BackgroundGenerator:generateBackground()
         	            scene3:insert(myBackground3)
                         
                         myBackground3:toBack()
+                    elseif(backgroundType==3) then
+                	 	scene3:removeSelf()
+                        scene3=display.newGroup()
+                        backgroundGroup:insert(scene3)
+                        scene3:toBack()
+                        
+                        myBackground3=display.newImageRect("images/game-3-endright-background-iPad.png",1024,768)
+                        --myBackground3:setReferencePoint(display.TopLeftReferencePoint)
+                        myBackground3:setReferencePoint(display.TopLeftReferencePoint)
+                        myBackground3.x=0
+    		            myBackground3.y=0
+        	            scene3:insert(myBackground3)
+                        
+                        myBackground3:toBack()
+                        
+                        scene3FG:removeSelf()
+                        scene3FG=display.newGroup()
+                        scene3FG.x=display.contentWidth
+                        
+                        local scene3FGImage=display.newImageRect("images/game-3-center-foreground-iPad.png",1024,768)
+                        scene3FG:insert(scene3FGImage)
+                        scene3FGImage:setReferencePoint(display.TopLeftReferencePoint)
+                        scene3FGImage.x=0
+        	            scene3FGImage.y=0
+                        
+                        foregroundGroup:insert(scene3FG)
     			 	end
                     --[[ 
                     local myRect=display.newRect(0,0,display.contentWidth,display.contentHeight)

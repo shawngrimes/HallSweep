@@ -14,8 +14,8 @@ function MyCharacter.newCoin()
     coin.isCollected=false
     
     local function onCollision( self, event )
-    	print("Collision With: ", event.other.myName)
-		print("Last Collision With: ",tostring(lastCollisionWith))
+--    	print("Collision With: ", event.other.myName)
+--		print("Last Collision With: ",tostring(lastCollisionWith))
         if ( event.phase == "began" and event.other.myName=="patriotHero") then
             coin.isVisible=false
         end
@@ -46,90 +46,190 @@ end
 
 
 function MyCharacter.newThreeInAColumn()
-
-	local shouldRepeat=true;
+    local shouldRepeat=true;
+    local coins={};
+    local tempCoin = MyCharacter.newCoin();
+    local topCoinY=math.random(tempCoin.contentHeight * 3, display.contentHeight - tempCoin.contentHeight * 3)
+    tempCoin:removeSelf();
+    tempCoin=nil;
     
-    local coins={}
-	
-	local topCoinY=display.contentHeight*.5
-
 	for counter=1,3 do
-		local coin = display.newImage( "images/object-coin-iPad.png", 100, 200 )
-		coin.myName="coin"
-		physics.addBody( coin, "static" , { density = 1.0, friction = 0.3, bounce = 0.2, radius=25} )
-	    coin.isSensor=true
-        coin.isCollected=false
-
-        local function onCollision( self, event )
-            if ( event.phase == "began" and event.other.myName=="patriotHero") then
-                coin.isVisible=false
-            end
-        end
-        coin.collision = onCollision
-        coin:addEventListener( "collision", coin )
-    
-		--Move the start position to the far right of the screen
-		coin.x=display.contentWidth + coin.contentWidth
+		local coin = MyCharacter.newCoin()
+	    coin.x=display.contentWidth
+		--First Column
 		if(counter==1) then
-			coin.y=topCoinY
-		else
+            coin.y=topCoinY
+    	else
 			topCoinY = topCoinY + coin.contentHeight 
 			coin.y=topCoinY
 		end
         
-        function coinsOnGameOver( self, event )
-            shouldRepeat=false
-            if(coin.transition~=nil) then
-                transition.cancel(coin.transition)
-                coin.transition=nil
-            end
-    		Runtime:removeEventListener( "SignalGameOver", coinsOnGameOver )
-    	end
-    	 
-    	coin.SignalGameOver = onGameOver
-    	Runtime:addEventListener( "SignalGameOver", coinsOnGameOver )
+		local distanceToTravel=coin.x - (-2 * coin.contentWidth)
+        local travelTime=distanceToTravel/(1/coin.speed)
         
-		coins[counter]=coin
-	end
-	
-	local function removeObject(object)
-		coin:removeSelf()
-		coin=nil;
-	end
-	
-	--Set your character's speed
-	coinSpeed=8  -- Try changing this number to adjust the speed
-	
-	--Calculate the time it takes to travel
-	local distanceToTravel=display.contentWidth
-	local travelTime=distanceToTravel/(1/coinSpeed)
-	print("Travel Time: ", travelTime)
-	
-	local function repeatCharacter()
-		if(shouldRepeat) then
-            shouldRepeat=false
-            for i = 1, #coins do
-                coins[i].isVisible=true
-    			coins[i].x=display.contentWidth
-    			coins[i].transition=transition.to(coins[i],{time=travelTime,
-    									x=-2 * coins[i].contentWidth,
-    									onComplete=coins[i].shouldMoveCharacter})
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
             end
-		end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                object:removeSelf();
+                object=nil;
+            end
+        end
+        coin.transitionComplete = removeObject
+        
+        coin.transition=transition.to(coin,{time=travelTime,
+            								x=-2 * coin.contentWidth,
+        									onComplete=removeObject})
+        
+        coins[counter]=coin
 	end
-	
-	shouldMoveCharacter = function()
-		local randomStartTime=math.random(1000,5000)
-		timer.performWithDelay(randomStartTime,repeatCharacter,1)
-	end
-	
-	shouldMoveCharacter()
     
-    
-    --coinDisplayGroup.x=150
-	--coinDisplayGroup:setReferencePoint(display.CenterLeftReferencePoint)
+    return coins
+	
+end
 
-	return coins
+function MyCharacter.newTenColumn()
+    local shouldRepeat=true;
+    local coins={};
+    local tempCoin = MyCharacter.newCoin();
+    local topCoinY=math.random(3*tempCoin.contentHeight, display.contentHeight - 3*tempCoin.contentHeight)
+    tempCoin:removeSelf();
+    tempCoin=nil;
+    local lastX=display.contentWidth
+    
+    for counter=1,10 do
+        local coin = MyCharacter.newCoin()
+        coin.y=topCoinY
+        coin.x=lastX
+        lastX=lastX + coin.contentWidth
+        
+        if((counter%5)==0 and counter>1) then
+            topCoinY=topCoinY+coin.contentHeight
+            lastX=display.contentWidth
+        end
+        
+        
+		
+		local distanceToTravel=coin.x - (-2 * coin.contentWidth)
+        local travelTime=distanceToTravel/(1/coin.speed)
+        
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
+            end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                object:removeSelf();
+                object=nil;
+            end
+        end
+        coin.transitionComplete = removeObject
+        
+        coin.transition=transition.to(coin,{time=travelTime,
+            								x=-2 * coin.contentWidth,
+        									onComplete=removeObject})
+        
+        coins[counter]=coin
+	end
+    
+    return coins
+	
+end
+
+function MyCharacter.newFifteenColumn()
+    local shouldRepeat=true;
+    local coins={};
+    local tempCoin = MyCharacter.newCoin();
+    local topCoinY=math.random(3*tempCoin.contentHeight, display.contentHeight - 3*tempCoin.contentHeight)
+    tempCoin:removeSelf();
+    tempCoin=nil;
+    local lastX=display.contentWidth
+    
+    for counter=1,15 do
+    	local coin = MyCharacter.newCoin()
+        coin.y=topCoinY
+        coin.x=lastX
+        lastX=lastX + coin.contentWidth
+        
+        if((counter%5)==0 and counter>1) then
+            topCoinY=topCoinY+coin.contentHeight
+            lastX=display.contentWidth
+        end
+        
+        
+		
+		local distanceToTravel=coin.x - (-2 * coin.contentWidth)
+        local travelTime=distanceToTravel/(1/coin.speed)
+        
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
+            end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                object:removeSelf();
+                object=nil;
+            end
+        end
+        coin.transitionComplete = removeObject
+        
+        coin.transition=transition.to(coin,{time=travelTime,
+            								x=-2 * coin.contentWidth,
+        									onComplete=removeObject})
+        
+        coins[counter]=coin
+	end
+    
+    return coins
+	
+end
+
+function MyCharacter.newFiveInARow()
+    local shouldRepeat=true;
+    local coins={};
+    local tempCoin = MyCharacter.newCoin();
+    local topCoinY=math.random(tempCoin.contentHeight, display.contentHeight - tempCoin.contentHeight)
+    tempCoin:removeSelf();
+    tempCoin=nil;
+    
+    local lastX=display.contentWidth
+    for counter=1,5 do
+		local coin = MyCharacter.newCoin()
+	    coin.x=lastX
+        lastX=lastX + coin.contentWidth
+        
+        coin.y=topCoinY
+		
+		local distanceToTravel=coin.x - (-2 * coin.contentWidth)
+        local travelTime=distanceToTravel/(1/coin.speed)
+        
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
+            end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                object:removeSelf();
+                object=nil;
+            end
+        end
+        coin.transitionComplete = removeObject
+        
+        coin.transition=transition.to(coin,{time=travelTime,
+            								x=-2 * coin.contentWidth,
+        									onComplete=removeObject})
+        
+        coins[counter]=coin
+	end
+    
+    return coins
+	
 end
 
 function MyCharacter.newMattCoins()
@@ -297,147 +397,121 @@ function MyCharacter.newMattCoins()
 end
 
 
- function MyCharacter.newAliCoins()
-
-	local shouldRepeat=true;
-	
-	local coinDisplayGroup=display.newGroup()
-	
-	local topCoinY=display.contentHeight*.5
+function MyCharacter.newAliCoins()
+    local shouldRepeat=true;
+    local coins={};
 
 	for counter=1,26 do
-		local coin = display.newImage( "images/object-coin-iPad.png", 100, 200 )
-		coin.myName="coin"
-		physics.addBody( coin, "static" , { density = 1.0, friction = 0.3, bounce = 0.2, radius = 25 } )
-	
-		--Move the start position to the far right of the screen
-		coin.x=0
-		--First Column
-		if(counter==1) then
-			coin.x=100
-			coin.y=display.contentHeight*.500
+		local coin = MyCharacter.newCoin()
+        if(counter==1) then
+    		coin.x=display.contentWidth + 100
+			coin.y=display.contentHeight*.550
 		elseif (counter==2) then
-			coin.x=120
-			coin.y=display.contentHeight*.450
+			coin.x=display.contentWidth + 120
+			coin.y=display.contentHeight*.500
 		elseif(counter==3) then
-			coin.x=140
-			coin.y=display.contentHeight*.400
+			coin.x=display.contentWidth + 140
+			coin.y=display.contentHeight*.450
 		elseif(counter==4) then
-			coin.x=160
-			coin.y=display.contentHeight*.350
+			coin.x=display.contentWidth + 160
+			coin.y=display.contentHeight*.400
 		elseif(counter==5) then
-			coin.x=180
-			coin.y=display.contentHeight*.300
+			coin.x=display.contentWidth + 180
+			coin.y=display.contentHeight*.350
 		elseif(counter==6) then
-			coin.x=200
-			coin.y=display.contentHeight*.250
+			coin.x=display.contentWidth + 200
+			coin.y=display.contentHeight*.300
 		elseif(counter==7) then
-			coin.x=220
-			coin.y=display.contentHeight*.200
+			coin.x=display.contentWidth + 220
+			coin.y=display.contentHeight*.250
 		elseif(counter==8) then
-			coin.x=240
-			coin.y=display.contentHeight*.150
+			coin.x=display.contentWidth + 240
+			coin.y=display.contentHeight*.200
 		elseif(counter==9) then
-			coin.x=260
-			coin.y=display.contentHeight*.100
+			coin.x=display.contentWidth + 260
+			coin.y=display.contentHeight*.150
 		elseif(counter==10) then
-			coin.x=300
+			coin.x=display.contentWidth + 280
 			coin.y=display.contentHeight*.100	
 		elseif (counter==11) then
-			coin.x=300
+			coin.x=display.contentWidth + 300
 			coin.y=display.contentHeight*.100
 		elseif(counter==12) then
-			coin.x=320
-			coin.y=display.contentHeight*.100
-		elseif(counter==13) then
-			coin.x=340
+			coin.x=display.contentWidth + 320
 			coin.y=display.contentHeight*.150
-		elseif(counter==14) then
-			coin.x=360
+		elseif(counter==13) then
+			coin.x=display.contentWidth + 340
 			coin.y=display.contentHeight*.200
-		elseif(counter==15) then
-			coin.x=380
+		elseif(counter==14) then
+			coin.x=display.contentWidth + 360
 			coin.y=display.contentHeight*.250
-		elseif(counter==16) then
-			coin.x=400
+		elseif(counter==15) then
+			coin.x=display.contentWidth + 380
 			coin.y=display.contentHeight*.300
-		elseif(counter==17) then
-			coin.x=420
+		elseif(counter==16) then
+			coin.x=display.contentWidth + 400
 			coin.y=display.contentHeight*.350
-		elseif(counter==18) then
-			coin.x=440
+		elseif(counter==17) then
+			coin.x=display.contentWidth + 420
 			coin.y=display.contentHeight*.400
-		elseif(counter==19) then
-			coin.x=460
+		elseif(counter==18) then
+			coin.x=display.contentWidth + 440
 			coin.y=display.contentHeight*.450
-		elseif(counter==20) then
-			coin.x=470
+		elseif(counter==19) then
+			coin.x=display.contentWidth + 460
 			coin.y=display.contentHeight*.500
+		elseif(counter==20) then
+			coin.x=display.contentWidth + 470
+			coin.y=display.contentHeight*.550
 		elseif(counter==21) then
-			coin.x=220
+			coin.x=display.contentWidth + 220
 			coin.y=display.contentHeight*.300
 		elseif(counter==22) then
-			coin.x=250
+			coin.x=display.contentWidth + 250
 			coin.y=display.contentHeight*.300
 		elseif(counter==23) then
-			coin.x=280
+			coin.x=display.contentWidth + 280
 			coin.y=display.contentHeight*.300
 		elseif(counter==24) then
-			coin.x=310
+			coin.x=display.contentWidth + 310
 			coin.y=display.contentHeight*.300
 		elseif(counter==25) then
-			coin.x=340
+			coin.x=display.contentWidth + 340
 			coin.y=display.contentHeight*.300
 		elseif(counter==26) then
-			coin.x=370
+			coin.x=display.contentWidth + 370
 			coin.y=display.contentHeight*.300
-			
-		
-	
-		
-			
-			
 		end
-		coinDisplayGroup:insert(coin)
+        
+        
+        local distanceToTravel=coin.x - (-2 * coin.contentWidth)
+        local travelTime=distanceToTravel/(1/coin.speed)
+        
+        local function removeObject(object)
+             if(object.transition~=nil) then
+                transition.cancel(object.transition)
+                object.transition=nil
+            end
+            Runtime:removeEventListener( "SignalGameOver", coin )
+            if(object~=nil) then
+                --[[if pcall(function() object:removeSelf() end) then
+                    else
+                    object = nil -- just making sure
+                end
+                ]]
+                object:removeSelf();
+            end
+        end
+        coin.transitionComplete = removeObject
+        
+        coin.transition=transition.to(coin,{time=travelTime,
+            								x=-2 * coin.contentWidth,
+        									onComplete=removeObject})
+        
+        coins[counter]=coin
 	end
-	
-	
-	
-	local function removeObject(object)
-		coin:removeSelf()
-		coin=nil;
-	end
-	
-	--Set your character's speed
-	coinDisplayGroup.speed=8  -- Try changing this number to adjust the speed
-	
-	--Calculate the time it takes to travel
-	local distanceToTravel=display.contentWidth
-	local travelTime=distanceToTravel/(1/coinDisplayGroup.speed)
-	print("Travel Time: ", travelTime)
-	
-	local function repeatCharacter()
-		if(shouldRepeat) then
-			coinDisplayGroup.x=display.contentWidth
-			coinDisplayGroup.transition=transition.to(coinDisplayGroup,{time=travelTime,
-									x=-2 * coinDisplayGroup.contentWidth,
-									onComplete=coinDisplayGroup.shouldMoveCharacter})
-			shouldRepeat=false
-		end
-	end
-	
-	coinDisplayGroup.shouldMoveCharacter = function()
-		local randomStartTime=math.random(1000,5000)
-		timer.performWithDelay(randomStartTime,repeatCharacter,1)
-	end
-	
-	--coinDisplayGroup.shouldMoveCharacter()
-	
-	--Uncomment after testing
-	--coinDisplayGroup.x=display.contentWidth + display.contentWidth * .2
-	coinDisplayGroup:setReferencePoint(display.CenterLeftReferencePoint)
-
-	return coinDisplayGroup
+    
+    return coins
 end
 
 

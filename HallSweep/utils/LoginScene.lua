@@ -40,7 +40,7 @@ function scene:createScene( event )
    background:setStrokeColor(255,255,255);
    background.alpha=0.5
    
-   backgroundImage=display.newImage(Utils.getImageNameWithSuffix("container-login.png"))
+   backgroundImage=display.newImageRect("images/login-iPad.png",622,652)
    backgroundImage.x=Utils.screenWidth * .5
    backgroundImage.y=Utils.screenHeight * .5
    group:insert(backgroundImage)
@@ -105,6 +105,7 @@ function scene:enterScene( event )
         --      INSERT code here (e.g. start timers, load audio, start listeners, etc.)
         
         -----------------------------------------------------------------------------
+    --[[
     if(Utils.isIPadRetina()) then
     	textFieldFont = native.newFont( "HVD Comic Serif Pro", 24 )
     elseif(Utils.isIPad()) then
@@ -118,7 +119,9 @@ function scene:enterScene( event )
 	elseif(Utils.isIPhone()) then
 		textFieldFont = native.newFont( "HVD Comic Serif Pro", 12 )
 	end
-	
+	]]
+    textFieldFont = native.newFont( "HVD Comic Serif Pro", 16/display.contentScaleY )
+    
 	function onUsername( event )
     	if ( "began" == event.phase ) then
     		print("text: "..event.target.text)
@@ -163,7 +166,7 @@ function scene:enterScene( event )
 	
 	usernameField=native.newTextField(10,30,Utils.screenWidth * .5,Utils.screenHeight * .05);
 	usernameField.x=display.contentCenterX
-	usernameField.y=backgroundImage.contentBounds.yMin + usernameField.contentHeight * 1.75
+	usernameField.y=backgroundImage.contentBounds.yMin + usernameField.contentHeight * 3
 	usernameField.font=textFieldFont
 	usernameField.text = "Username..."
 	usernameField:setTextColor( 198,198,198, 255 )
@@ -257,8 +260,8 @@ function scene:enterScene( event )
 	
 	local cancelButton=widget.newButton{
 		id="cancelButton",
-		default=Utils.getImageNameWithSuffix("btn-cancel-up.png"),
-		over=Utils.getImageNameWithSuffix("btn-cancel-down.png"),
+		default="images/btn-cancel-up-iPad.png",
+		over="images/btn-cancel-down-iPad.png",
 		onEvent = onButtonEvent
 	}
 	cancelButton.x=backgroundImage.contentBounds.xMax - cancelButton.contentWidth * .25
@@ -267,8 +270,8 @@ function scene:enterScene( event )
 	
 	local logInButton = widget.newButton{
 	    id = "logInButton",		
-	    default=Utils.getImageNameWithSuffix("btn-login-up.png"),
-		over=Utils.getImageNameWithSuffix("btn-login-down.png"),	
+	    default="images/btn-login-up-iPad.png",
+		over="images/btn-login-down-iPad.png",	
 		onEvent = onButtonEvent
 	}
 	logInButton.x=Utils.screenWidth * .5
@@ -276,13 +279,7 @@ function scene:enterScene( event )
 	componentsGroup:insert(logInButton);
 	
 	local orScale
-	if(Utils.isIPadRetina() or Utils.isIPad()) then
-		orScale = .75
-	elseif(Utils.isIPhoneRetina()) then
-		orScale = .5
-	elseif(Utils.isIPhone()) then
-		orScale = .25
-	end
+	orScale = .75
 	--[[
 	local orLabel=TextCandy.CreateText({
 			fontName= FontNameToUse,
@@ -310,8 +307,8 @@ function scene:enterScene( event )
 	
 	local signUpButton = widget.newButton{
 	    id = "signUpButton",	
-	    default=Utils.getImageNameWithSuffix("btn-signup-up.png"),
-		over=Utils.getImageNameWithSuffix("btn-signup-down.png"),	
+	    default="images/btn-signup-up-iPad.png",
+		over="images/btn-signup-down-iPad.png",	
 	    onEvent = onButtonEvent
 	}
 	signUpButton.x = Utils.screenWidth * .5
@@ -320,15 +317,15 @@ function scene:enterScene( event )
 	componentsGroup:insert(signUpButton);
 	
 	local forgotScale
-	if(Utils.isIPadRetina()) then
-		forgotScale = 1
-	elseif(Utils.isIPad()) then
+	--if(Utils.isIPadRetina()) then
 		forgotScale = .5
-	elseif(Utils.isIPhoneRetina()) then
-		forgotScale = .4
-	elseif(Utils.isIPhone()) then
-		forgotScale = .2
-	end
+	--elseif(Utils.isIPad()) then
+	--	forgotScale = .5
+	--elseif(Utils.isIPhoneRetina()) then
+	--	forgotScale = .4
+	--elseif(Utils.isIPhone()) then
+	--	forgotScale = .2
+	--end
 	
 	local forgotPasswordLabel=TextCandy.CreateText({
 			fontName= FontNameToUse,

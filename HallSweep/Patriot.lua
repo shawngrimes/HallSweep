@@ -75,7 +75,7 @@ function MyCharacter.new()
 		end
 		
 		if(movingPatriot.y>625 and newPatriot.isFlying==true) then
-			print("Not flying anymore")
+			--print("Not flying anymore")
 			newPatriot.isFlying=false
 			extinguisherFog.isVisible=false
 			movingPatriot:play({startFrame=1,endFrame=4})
@@ -124,8 +124,8 @@ function MyCharacter.new()
     
 	local function onCollision( self, event )
         if ( event.phase == "began") then
-            print("Collision With: ", event.other.myName)
-    	    print("Last Collision With: ",tostring(lastCollisionWith))
+--            print("Collision With: ", event.other.myName)
+--    	    print("Last Collision With: ",tostring(lastCollisionWith))
         	if((event.other.myName == "bully" or event.other.myName=="OfficerRay" or event.other.myName=="imbriale")  and (lastCollisionWith ~= event.other.myName)) then
                 lastCollisionWith=event.other.myName
                 timer.performWithDelay(500,resetLastCollision)
